@@ -1,5 +1,6 @@
 package agents;
 
+import data.ProductImage;
 import jade.core.AID;
 import jade.core.AgentServicesTools;
 import jade.domain.FIPANames;
@@ -23,6 +24,8 @@ public class UserAgent extends AgentWindowed {
      * list of potential helpers (agent registered in the type of service "repair"
      */
     List<AID> helpers;
+    List<ProductImage> produits;
+
 
     @Override
     public void setup() {
@@ -32,6 +35,8 @@ public class UserAgent extends AgentWindowed {
         skill = (int) (Math.random() * 6);
         println("hello, I have a repair skill of " + skill + " / 3");
         helpers = new ArrayList<>(10);
+
+
     }
 
     @Override
