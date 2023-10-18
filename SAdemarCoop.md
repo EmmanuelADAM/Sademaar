@@ -157,24 +157,38 @@ participant "Distributeur\n2nde main 1" as ds1 #lightcyan
 <!--
 ```
 @startuml GlobalUseCase
-'!pragma layout smetana
-skinparam linetype polyline
+!pragma layout smetana
+left to right direction
+'skinparam linetype polyline
 
 actor admin  #yellow
 actor user as us
 actor "Repair\n Café" as rc #tan 
 actor "Pièces\n détâchées" as pd #green 
 actor "Distributeur" as di #cyan 
-package SademaarSite #EEFFEE{
+'====================================================
+package SademaarSite #EEFFEE{ 
+'--------------------------------------------------
 useCase "enregistrer" as enregistrer
+'--------------------------------------------------
 
+'--------------------------------------------------
+useCase enregistrerUser as "enregistrer\n personne
+--
+nom, prenom, email
+adresse
+compétences
+"
+'--------------------------------------------------
 useCase enregistrerCafe as "enregistrer\n repair café
 --
 adresse
 specialités
 horaires d'ouvertures"
+'--------------------------------------------------
 
 
+'--------------------------------------------------
 useCase enregistrerPD as "enregistrer\n mag. pièces détachées
 --
 adresse
@@ -182,31 +196,57 @@ types de produits
 neuf et/ou occasion
 bla
 "   
+'--------------------------------------------------
 
+
+'--------------------------------------------------
 useCase enregistrerDistri as "enregistrer\n distributeur
 --
 adresse
 neuf et/ou occasion
-types de produits
+types de produits 
 "   
+'--------------------------------------------------
 
-useCase analyserPanne
+'--------------------------------------------------
+useCase analyserPanne as "analyser panne
+--
+documents\n(mode d'emploi, doc technique, ...)
+" 
+'--------------------------------------------------
 
+'--------------------------------------------------
+useCase reparerPanne as "réparer panne
+--
+- pièces disponibles 
+" 
+'--------------------------------------------------
 }
-admin -> enregistrer
-enregistrerCafe --|> enregistrer
-rc -> enregistrerCafe
-enregistrerPD --|> enregistrer
-pd --> enregistrerPD
-enregistrerDistri --|> enregistrer
-di --> enregistrerDistri
-us-->analyserPanne
+'====================================================
+
+'====================================================
+admin --> enregistrer
+enregistrer <|--  enregistrerCafe
+rc --> enregistrerCafe
+enregistrer <|--  enregistrerPD 
+enregistrerPD <-- pd
+enregistrer <|--  enregistrerDistri
+enregistrerDistri  <-- di  
 rc-->analyserPanne
+us-->analyserPanne
+reparerPanne -> analyserPanne 
+rc-->reparerPanne
+us-->reparerPanne
+'====================================================
+
 @enduml```
 
 
 
 -->
-
+@startuml 
+testdot 
+@enduml
 
 ---
+
