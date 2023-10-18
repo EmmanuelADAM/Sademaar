@@ -157,15 +157,21 @@ participant "Distributeur\n2nde main 1" as ds1 #lightcyan
 <!--
 ```
 @startuml GlobalUseCase
+<<<<<<< HEAD
 !pragma layout smetana
 left to right direction
 'skinparam linetype polyline
+=======
+'!pragma layout smetana
+skinparam linetype polyline
+>>>>>>> origin/main
 
 actor admin  #yellow
 actor user as us
 actor "Repair\n Café" as rc #tan 
 actor "Pièces\n détâchées" as pd #green 
 actor "Distributeur" as di #cyan 
+<<<<<<< HEAD
 '====================================================
 package SademaarSite #EEFFEE{ 
 '--------------------------------------------------
@@ -180,15 +186,25 @@ adresse
 compétences
 "
 '--------------------------------------------------
+=======
+package SademaarSite #EEFFEE{
+useCase "enregistrer" as enregistrer
+
+>>>>>>> origin/main
 useCase enregistrerCafe as "enregistrer\n repair café
 --
 adresse
 specialités
 horaires d'ouvertures"
+<<<<<<< HEAD
 '--------------------------------------------------
 
 
 '--------------------------------------------------
+=======
+
+
+>>>>>>> origin/main
 useCase enregistrerPD as "enregistrer\n mag. pièces détachées
 --
 adresse
@@ -196,14 +212,19 @@ types de produits
 neuf et/ou occasion
 bla
 "   
+<<<<<<< HEAD
 '--------------------------------------------------
 
 
 '--------------------------------------------------
+=======
+
+>>>>>>> origin/main
 useCase enregistrerDistri as "enregistrer\n distributeur
 --
 adresse
 neuf et/ou occasion
+<<<<<<< HEAD
 types de produits 
 "   
 '--------------------------------------------------
@@ -239,14 +260,37 @@ rc-->reparerPanne
 us-->reparerPanne
 '====================================================
 
+=======
+types de produits
+"   
+
+useCase analyserPanne
+
+}
+admin -> enregistrer
+enregistrerCafe --|> enregistrer
+rc -> enregistrerCafe
+enregistrerPD --|> enregistrer
+pd --> enregistrerPD
+enregistrerDistri --|> enregistrer
+di --> enregistrerDistri
+us-->analyserPanne
+rc-->analyserPanne
+>>>>>>> origin/main
 @enduml```
 
 
 
 -->
+<<<<<<< HEAD
 @startuml 
 testdot 
 @enduml
 
 ---
 
+=======
+
+
+---
+>>>>>>> origin/main
