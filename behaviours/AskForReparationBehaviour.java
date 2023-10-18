@@ -2,9 +2,12 @@ package behaviours;
 
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import agents.UserAgent;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,53 +25,71 @@ public class AskForReparationBehaviour extends ContractNetInitiator {
     //                    list that can be modified here or at once when all the messages are received
     @Override
     public void handlePropose(ACLMessage propose, List<ACLMessage> acceptances) {
-        a.getWindow().println("Agent %s proposes %s ".formatted(propose.getSender().getLocalName(), propose.getContent()));
+        LocalDateTime creneau = null;
+        try { creneau = (LocalDateTime)propose.getContentObject(); }
+        catch (UnreadableException e) { throw new RuntimeException(e);}
+        a.getWindow().println("%s\tproposes %s ".formatted(propose.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
     }
 
     //function triggered by a REFUSE msg
     @Override
     protected void handleRefuse(ACLMessage refuse) {
-        a.getWindow().println("REFUSE ! I received a refuse from " + refuse.getSender().getLocalName());
+        a.getWindow().println(refuse.getSender().getLocalName() + "\tdecline ! ");
     }
 
-    //function triggered when all the responses are received (or after the waiting time)
-    //@param theirVotes the list of message sent by the voters
-    //@param myAnswers the list of answers for each voter
+    /**function triggered when all the responses are received (or after the waiting time)
+    *@param responses the list of message sent by the voters
+    *@param acceptances the list of answers for each voter*/
     @Override
     protected void handleAllResponses(List<ACLMessage> responses, List<ACLMessage> acceptances) {
         ArrayList<ACLMessage> listeProposals = new ArrayList<>(responses);
+        ACLMessage bestProposal = null;
+        LocalDateTime bestDate = LocalDateTime.of(9999, 12, 31, 23, 59);
         //we keep only the proposals only
         listeProposals.removeIf(v -> v.getPerformative() != ACLMessage.PROPOSE);
         acceptances.clear();
+        a.println("-".repeat(30));
+        a.println("I have all the responses.. to sum-up : ");
 
-        ACLMessage bestProposal =null;
         ACLMessage bestAnswer =null;
-        var bestPrice = Integer.MAX_VALUE;
 
+        LocalDateTime creneau = null;
         for (ACLMessage proposal : listeProposals) {
             //by default, we build a accept answer for each proposal
             var answer = proposal.createReply();
             answer.setPerformative(ACLMessage.REJECT_PROPOSAL);
+            answer.setContent("This rdz-vs doesn'fit with my agenda...");
             acceptances.add(answer);
-            var content = Integer.parseInt(proposal.getContent());
-            a.getWindow().println(proposal.getSender().getLocalName() + " has proposed " + content);
-            if (content<bestPrice){
-                bestPrice = content;
-                bestProposal = proposal;
-                bestAnswer = answer;
+            try {
+                creneau = (LocalDateTime) proposal.getContentObject();
+                if (creneau.isBefore(bestDate))
+                {
+                    bestDate = creneau;
+                    bestProposal = proposal;
+                    bestAnswer = answer;
+                }
+            } catch (UnreadableException e) {
+                throw new RuntimeException(e);
             }
-
+            a.println("%s\t has proposed %s ".formatted(proposal.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
+        }
+        a.println(".".repeat(30));
+        if(bestAnswer!=null) {
+            bestAnswer.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+            bestAnswer.setContent("I accept the rdz-vs...");
+            a.println("I choose the proposal of " + bestProposal.getSender().getLocalName());
+        } else {
+            a.println("I have no proposal !!!! I'll retry later :-( ...... ");
         }
 
-        if (bestProposal !=null)
-        {
-            bestProposal.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-            a.getWindow().println("I choose the proposal of " + bestProposal.getSender().getLocalName());
-        }
+
+
 
         a.getWindow().println("-".repeat(40));
 
     }
+
+
 
     //function triggered by a INFORM msg : a voter accept the result
     // @Override

@@ -1,47 +1,94 @@
 package data;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 
-public enum ProductSpec {
-    Cafetiere(true, 3,0, 2), LaveLinge(false, 3, 2, 4),
-    SourisOrdi(true, 2, 0, 1), Aspirateur(true, 3, 1, 3),
-    LaveVaisselle(false, 2, 3, 5);
-    int nbSmallParts;
-    int nbBigParts;
-    boolean danger;
-    int difficulty;
-    boolean transportable;
+public class ProductSpec implements Serializable {
 
-    private final Random rand = new Random();
+    static List<ProductSpec> listProductType;
+    static List<Part> listSmallParts = new ArrayList<>(50);
+    static List<Part> listBigParts = new ArrayList<>(50);
+    Part[] smallParts;
+    Part[] bigParts;
+    double price;
+    ProductType type;
 
-    ProductSpec(boolean transportable, int nbSmallParts, int nbBigParts, int difficulty){
-        this.transportable = transportable;
-        this.difficulty = difficulty;
-        this.nbSmallParts = nbSmallParts;
-        this.nbBigParts = nbBigParts;
-        if(difficulty==5) danger = true;
+    private static final Random rand = new Random();
+
+    ProductSpec(){}
+    static ProductSpec createProductType(ProductType spec){
+        ProductSpec pn = new ProductSpec();
+        pn.type = spec;
+        pn.smallParts = new Part[spec.nbSmallParts];
+        for (int i=0; i<spec.nbSmallParts; i++) {
+            pn.smallParts[i] = new Part((spec.ordinal() + 1)*100 + i, rand.nextInt(1, 3),
+                    Math.floor(100.0 * rand.nextDouble(2., 20.)) / 100.0);
+            listSmallParts.add(pn.smallParts[i]);
+        }
+        pn.bigParts = new Part[spec.nbBigParts];
+        for (int i=0; i<spec.nbBigParts; i++){
+            pn.bigParts[i] = new Part((spec.ordinal() + 1)*1000 + i, rand.nextInt(1,spec.difficulty+1),
+                    Math.floor(100.*rand.nextDouble(30., 100.))/100.);
+            listBigParts.add(pn.bigParts[i]);
+        }
+
+        pn.price = Arrays.stream(pn.smallParts).mapToDouble(Part::price).sum();
+        pn.price += Arrays.stream(pn.bigParts).mapToDouble(Part::price).sum();
+        pn.price *= 1.5d;
+
+        return pn;
     }
 
-/*    @Override
+
+    public static List<ProductSpec> getListProductType(){
+        if(listProductType==null) {
+            listProductType = new ArrayList<>(50);
+            for(ProductType ps: ProductType.values())
+                listProductType.add(createProductType(ps));
+        }
+        return listProductType;
+    }
+
+
+    @Override
     public String toString() {
-        return String.format("%s,  difficulty=%d, transportable=%b, danger=%b " +
-                "\n\tnb smallParts=%d\n\tnb bigParts=%d",
-                this.name(), difficulty, transportable, danger, nbSmallParts, nbBigParts);
+        return String.format("%s,  difficulty=%d, transportable=%b, danger=%b ",// +
+//                "\n\tsmallParts=%s\n\tbigParts=%s",
+                this.type.name(), type.difficulty, type.transportable, type.danger);
+//                Arrays.toString(smallParts), Arrays.toString(bigParts));
     }
-*/
+
+    public Part[] getSmallParts() {
+        return smallParts;
+    }
+
+
+    public Part[] getBigParts() {
+        return bigParts;
+    }
 
     public boolean isDanger() {
-        return danger;
+        return type.danger;
     }
 
     public int getDifficulty() {
-        return difficulty;
+        return type.difficulty;
     }
 
     public boolean isTransportable() {
-        return transportable;
+        return type.transportable;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public ProductType getType() {
+        return type;
+    }
 
 }

@@ -18,7 +18,7 @@ public class LaunchAgents {
         //les donnees
         System.out.println("-".repeat(20));
         System.out.println("- Les produits existants - ");
-        var tab = Product.getTabProducts();
+        var tab = Product.getListProducts();
         for(var p:tab)  System.out.println(p);
         System.out.println("-".repeat(20));
         // preparer les arguments pout le conteneur JADE

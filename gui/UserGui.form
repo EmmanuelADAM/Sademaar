@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gui.UserGui">
+  <grid id="27dc6" binding="jpMain" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="636" height="468"/>
+    </constraints>
+    <properties>
+      <preferredSize width="400" height="400"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <scrollpane id="27ed7" binding="jscpane">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="22d18" class="javax.swing.JTextArea" binding="zoneTexte">
+            <constraints/>
+            <properties>
+              <editable value="false"/>
+              <lineWrap value="true"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <grid id="79e06" layout-manager="GridBagLayout">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="6d4bf" class="javax.swing.JButton" binding="jbOk">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <text value="Transmettre"/>
+            </properties>
+          </component>
+          <component id="1be54" class="javax.swing.JLabel" binding="jlChoixProduit">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Produit à réparer :"/>
+            </properties>
+          </component>
+          <component id="c178e" class="javax.swing.JLabel" binding="jlNiveau">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Niveau d'expérience : "/>
+            </properties>
+          </component>
+          <component id="2b0e6" class="javax.swing.JSlider" binding="slideNiveau">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <majorTickSpacing value="1"/>
+              <maximum value="5"/>
+              <minorTickSpacing value="1"/>
+              <paintLabels value="true"/>
+              <paintTicks value="true"/>
+              <snapToTicks value="true"/>
+              <value value="2"/>
+              <valueIsAdjusting value="true"/>
+            </properties>
+            <clientProperties>
+              <JSlider.isFilled class="java.lang.Boolean" value="false"/>
+            </clientProperties>
+          </component>
+          <component id="53d41" class="javax.swing.JLabel" binding="jlChoixOffre">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Choix de réparation :"/>
+            </properties>
+          </component>
+          <component id="b8113" class="javax.swing.JComboBox" binding="comboChoixProduit">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="ff2a2" class="javax.swing.JComboBox" binding="comboReparation">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

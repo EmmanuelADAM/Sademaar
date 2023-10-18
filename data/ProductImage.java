@@ -1,16 +1,20 @@
 package data;
 
-public class ProductImage {
+import java.io.Serializable;
+
+public class ProductImage implements Serializable {
 
     Product p;
     int interest;
     double maxPriceRepairing;
     double thresholdPriceRepairing;
-    ProductImage(Product p){
+    public ProductImage(Product p){
         this.p = p;
-        interest=5;
-        maxPriceRepairing = p.price*(Math.random()*.45+0.5);
+        this.interest=(int)(Math.random()*10);
+        this.maxPriceRepairing = p.price*(Math.random()*.45+0.5);
+        this.thresholdPriceRepairing = maxPriceRepairing/2;
     }
+
 
     public ProductImage(Product p, int interest, double thresholdPriceRepairing, double maxPriceRepairing) {
         this.p = p;
@@ -24,9 +28,13 @@ public class ProductImage {
         return String.format("Product %s, interest=%d, thresholdPriceRepairing=%.2f, maxPriceRepairing=%.2f ", p , interest, thresholdPriceRepairing, maxPriceRepairing);
     }
 
+    public Product getP() {
+        return p;
+    }
+
     public static void main(String[] args)
     {
-        var liste = ProductType.getListProductType();
+        var liste = ProductSpec.getListProductType();
         liste.forEach(System.out::println);
     }
 }

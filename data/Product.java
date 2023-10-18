@@ -1,51 +1,66 @@
 package data;
 
-import java.util.Random;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Product {
+public class Product implements Serializable {
 
     String name;
-    ProductType type;
+    ProductSpec spec;
     long id;
     double price;
     static int nbProducts = 0;
-    static Product[]tabProducts;
-    static final int NBTOPROD = 100;
+    public static List<Product> listProducts;
+    public static final int NB_PRODS = 100;
 
-    Product(String name, ProductType type){
+    Product(String name, ProductSpec type){
         this.name = name;
-        this.type = type;
+        this.spec = type;
         price = type.getPrice()*(1.+Math.random()*.1);
         id = ++nbProducts;
     }
 
     @Override
     public String toString() {
-        return String.format("Product{ %d : %s - %s - %.2f€}", id, name, type, price);
+        return String.format("Product{ %d : %s - %s - %.2f€}", id, name, spec, price);
     }
 
 
-    static public Product[] getTabProducts() {
-        if (tabProducts == null) {
-            Random r = new Random();
-            tabProducts = new Product[NBTOPROD];
-            int nbSpec = ProductSpec.values().length;
-            int nbBySpec = NBTOPROD/nbSpec;
-            var listeType = ProductType.getListProductType();
-            int j=0;
+    static public List<Product> getListProducts() {
+        if (listProducts == null) {
+            listProducts = new ArrayList<>(NB_PRODS);
+            int nbSpec = ProductType.values().length;
+            int nbBySpec = NB_PRODS /nbSpec;
+            var listeType = ProductSpec.getListProductType();
             for(var type:listeType){
                 for(int i=0; i<nbBySpec; i++) {
-                    tabProducts[j] = new Product(type.getSpec().name()+ i, type);
-                    j++;
+                    listProducts.add(new Product(type.getType().name()+"-"+ i, type));
                 }
             }
         }
-        return tabProducts;
+        return listProducts;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ProductSpec getSpec() {
+        return spec;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     public static void main(String[] args)
     {
-        var tab = Product.getTabProducts();
+        var tab = Product.getListProducts();
         for(var p:tab)  System.out.println(p);
         System.out.println("-".repeat(20));
     }
