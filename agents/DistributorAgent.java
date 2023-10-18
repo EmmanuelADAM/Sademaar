@@ -1,11 +1,13 @@
 package agents;
 
 import jade.core.AgentServicesTools;
+import jade.gui.AgentWindowed;
 import jade.gui.SimpleWindow4Agent;
 
 import java.awt.*;
 
 public class DistributorAgent extends RepairAgent {
+
     @Override
     public void setup(){
         window = new SimpleWindow4Agent(getLocalName(),this);
@@ -16,7 +18,6 @@ public class DistributorAgent extends RepairAgent {
         //registration to the yellow pages (Directory Facilitator Agent)
         println("I'm just registered as a Distributor");
 
-        addListeningACFP();
     }
 
 }

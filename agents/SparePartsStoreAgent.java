@@ -1,6 +1,7 @@
 package agents;
 
 import jade.core.AgentServicesTools;
+import jade.gui.AgentWindowed;
 import jade.gui.SimpleWindow4Agent;
 
 import java.awt.*;
@@ -16,7 +17,6 @@ public class SparePartsStoreAgent extends RepairAgent {
         AgentServicesTools.register(this, "repair", "SparePartsStore");
         println("I'm just registered as a Spare Parts Store");
 
-        addListeningACFP();
     }
 
 }
