@@ -11,6 +11,35 @@ Case study for ISSIA'23.
 ----
 ## Circular economy
 
+@startuml actititesPanne
+|Utilisateur|
+start
+partition "déclarer panne"{
+:se connecter;
+split
+:définir produit;
+split again
+:définir problème;
+end split
+:évaluer sa compétence sur le problème;
+:demander information sur aides financières;
+:demander liste de repairs cafés ;
+:choisir selon 
+    -disponibilité, proximité, avis personnel ;
+}
+note: cas sans prise\n de rdz-vs
+|#AntiqueWhite|Repair Café|
+:analyser la panne
+- avec l'utilisateur;
+:foo3;
+|Swimlane1|
+:foo4;
+|Swimlane2|
+:foo5;
+stop
+@enduml
+
+
 <!--
 ```
 @startuml declarationPanne
