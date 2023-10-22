@@ -12,32 +12,112 @@ Case study for ISSIA'23.
 ## Circular economy
 
 @startuml actititesPanne
+!pragma useVerticalIf on
+skinparam ConditionEndStyle hline
 |Utilisateur|
 start
-partition "déclarer panne"{
-:se connecter;
+'partition "déclarer panne"{
+#FFDD00:se connecter;
 split
-:définir produit;
+#FFDD00:définir produit;
 split again
-:définir problème;
+#FFDD00:définir problème;
 end split
-:évaluer sa compétence sur le problème;
-:demander information sur aides financières;
-:demander liste de repairs cafés ;
-:choisir selon 
-    -disponibilité, proximité, avis personnel ;
-}
+#FFDD00:évaluer sa compétence sur le problème;
+#FFDD00:demander information sur aides financières;
+#FFDD00:demander liste de repairs cafés ;
+:choisir RC selon 
+    - disponibilité,
+    - proximité,
+    - avis personnel ;
+
+'}
 note: cas sans prise\n de rdz-vs
 |#AntiqueWhite|Repair Café|
 :analyser la panne
 - avec l'utilisateur;
-:foo3;
-|Swimlane1|
-:foo4;
-|Swimlane2|
-:foo5;
-stop
-@enduml
+if (état?) then (non réparable)
+    :enregistrer cause;
+    :informer utilisateur;
+  |Utilisateur|
+  #FF6666:décision achat\n produit de remplacement;
+  if (achat de\n remplacement) then (oui)
+    #FFDD00:demander liste de distributeurs;
+    :choisir et contacter;
+    :étudier offres;
+    if (offre convenable) then (oui)
+        :achat;
+        #FFDD00:enregistrer achat;
+        end
+    else (non)
+        #FF9900:enregistrer 'echec';
+        end
+    end if
+  else (non)
+    #FF9900:enregistrer 'echec';
+    end
+  end if
+  |#AntiqueWhite|Repair Café|
+elseif (besoins\n pièces?) then (non)
+  if (besoin\n accompagnement ?) then (non)
+  :transmettre\n indication\n à utilisateur;
+  |Utilisateur|
+  while (non repare)
+  #palegreen:réparer;
+  :tester produit;
+  end while
+  #FFDD00:enregistrer réparation;
+  end
+  |#AntiqueWhite|Repair Café|
+  else (oui)
+  #palegreen:réparation\n avec utilisateur;
+  :tester produit;
+  #FFDD00:enregistrer réparation;
+  end
+  end if
+else (oui)
+  :identifier pièces;
+  :transmettre\n détails\n à utilisateur;
+endif
+|Utilisateur|
+  #FF6666::décision achat pièces;
+  if (achat de\n pièces) then (oui)
+      #FFDD00:demander liste de mag.\n de pièces détachées;
+      :choisir et contacter;
+      :étudier offres;
+      if (offre convenable) then (oui)
+          :achat;
+          #FFDD00:enregistrer achat;
+          if (réparation\n autonome) then (oui)
+              #palegreen:réparer;
+              :tester produit;
+              #FFDD00:enregistrer réparation;
+              end
+          else (non)
+              #FFDD00:dmd rdz-vs repair café;
+              end
+          end if
+      else (non)
+        #FF9900:enregistrer 'echec';
+        end
+      end if
+  elseif (achat de\n remplacement)
+      #FFDD00:demander liste de distributeurs;
+      :choisir et contacter;
+      :étudier offres;
+      if (offre convenable) then (oui)
+          :achat;
+        #FFDD00:enregistrer achat;
+          end
+      else (non)
+        #FF9900:enregistrer 'echec';    
+        end
+      end if
+    else (non)
+      #FF9900:enregistrer 'echec';
+      end
+    end if
+  @enduml
 
 
 <!--
