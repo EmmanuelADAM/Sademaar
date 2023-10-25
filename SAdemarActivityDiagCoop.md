@@ -37,7 +37,7 @@ note: cas sans prise\n de rdz-vs
 :analyser la panne
 - avec l'utilisateur;
 if (état?) then (non réparable)
-    :enregistrer cause;
+    #FFDD00:enregistrer cause;
     :informer utilisateur;
   |Utilisateur|
   #FF6666:décision achat\n produit de remplacement;
@@ -60,18 +60,42 @@ if (état?) then (non réparable)
   |#AntiqueWhite|Repair Café|
 elseif (besoins\n pièces?) then (non)
   if (besoin\n accompagnement ?) then (non)
-  :transmettre\n indication\n à utilisateur;
+  :transmettre\n indications\n à utilisateur;
   |Utilisateur|
-  while (non repare)
+  while (non repare et \nnon abandon)
   #palegreen:réparer;
   :tester produit;
   end while
-  #FFDD00:enregistrer réparation;
-  end
+  if (produit réparé) then (oui)
+    #FFDD00:enregistrer réparation;
+    end
+   else (non)
+    if (aide souhaitée) then (non)
+        #FF9900:enregistrer 'echec';
+        end
+    else (non)
+        #FFDD00:dmd rdz-vs repair café.\n **+besoin accompagnement**;
+        end
+    end if
+  end if
   |#AntiqueWhite|Repair Café|
   else (oui)
-  #palegreen:réparation\n avec utilisateur;
-  :tester produit;
+  while (non repare et \nnon abandon)
+    #palegreen:réparation\n avec utilisateur;
+    :tester produit;
+  end while
+  if (produit réparé) then (oui)
+      #FFDD00:enregistrer réparation;
+      end
+  else (non)
+      if (aide souhaitée) then (non)
+          #FF9900:enregistrer 'echec';
+          end
+      else (non)
+          #FFDD00:dmd rdz-vs repair café.\n **+besoin accompagnement**;
+          end
+      end if
+  end if
   #FFDD00:enregistrer réparation;
   end
   end if
