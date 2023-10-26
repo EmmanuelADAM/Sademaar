@@ -26,15 +26,43 @@ end split
 #FFDD00:évaluer sa compétence sur le problème;
 #FFDD00:demander information sur aides financières;
 #FFDD00:consulter tutos/aides ;
-:évaluer le besoin;
 #FFDD00:demander liste de repairs cafés ;
-:choisir RC selon 
+:trier RC selon 
     - disponibilité,
     - proximité,
     - avis personnel ;
-
+:évaluer le besoin;
+switch (besoin?)
+    case (achat produit\n de remplacement)
+        :décision achat\n produit de remplacement;
+        #FFDD00:demander liste de distributeurs;
+        :choisir et contacter;
+        :étudier offres;
+        if (offre convenable) then (oui)
+        :achat;
+        #FFDD00:enregistrer achat;
+        end
+        else (non)
+        #FF9900:enregistrer 'echec';
+        end
+        end if
+    case (pièce(s))
+        :décision achat\n de pièces;
+        #FFDD00:demander liste de mag.\n de pièces détachées;
+        :choisir et contacter;
+        :étudier offres;
+        if (offre convenable) then (oui)
+            :achat;
+            #FFDD00:enregistrer achat;
+end if
+case (panne fatale)
+        :guider vers\n achat produit;
+    case (achat produit\n de remplacement)
+            #FF6666:décision achat\n produit de remplacement;
+endswitch
 '}
 note: cas sans prise\n de rdz-vs
+:suite;
 |#AntiqueWhite|Repair Café|
 :analyser la panne
 - avec l'utilisateur;
