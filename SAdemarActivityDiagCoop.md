@@ -25,6 +25,8 @@ split again
 end split
 #FFDD00:évaluer sa compétence sur le problème;
 #FFDD00:demander information sur aides financières;
+#FFDD00:consulter tutos/aides ;
+:évaluer le besoin;
 #FFDD00:demander liste de repairs cafés ;
 :choisir RC selon 
     - disponibilité,
@@ -74,7 +76,7 @@ elseif (besoins\n pièces?) then (non)
         #FF9900:enregistrer 'echec';
         end
     else (non)
-        #FFDD00:dmd rdz-vs repair café.\n **+besoin accompagnement**;
+        #AAEEFF:dmd rdz-vs repair café.\n **+besoin accompagnement**;
         end
     end if
   end if
@@ -88,17 +90,24 @@ elseif (besoins\n pièces?) then (non)
       #FFDD00:enregistrer réparation;
       end
   else (non)
-      if (aide souhaitée) then (non)
-          #FF9900:enregistrer 'echec';
-          end
-      else (non)
-          #FFDD00:dmd rdz-vs repair café.\n **+besoin accompagnement**;
-          end
-      end if
+      :analyser problème;
+      #FF9900:enregistrer 'echec';
+      switch (problème) 
+        case (pb pièce) 
+              :identifier pièce;
+'              note: cf. cas 'besoin pièce'
+        case (pb compétence)
+              :lister compétences\n nécessaires;
+'              note: cf. cas 'besoin pièce'
+        case (panne fatale)
+              :guider vers\n achat produit;
+      endswitch
   end if
-  #FFDD00:enregistrer réparation;
+  |Utilisateur|
+  #FFDD00:décider choisir RC, mag. pièces,\n distributeur, ou arrêter;
   end
   end if
+  |#AntiqueWhite|Repair Café|
 else (oui)
   :identifier pièces;
   :transmettre\n détails\n à utilisateur;
