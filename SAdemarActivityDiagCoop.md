@@ -31,9 +31,10 @@ end split
     - disponibilité,
     - proximité,
     - avis personnel ;
+while(besoin non satisfait)
 :évaluer le besoin;
 switch (besoin?)
-    case (achat produit\n de remplacement)
+    case (achat produit\n de remplacement\n(panne fatale))
         :décision achat\n produit de remplacement;
         #FFDD00:demander liste de distributeurs;
         :choisir et contacter;
@@ -41,7 +42,6 @@ switch (besoin?)
         if (offre convenable) then (oui)
         :achat;
         #FFDD00:enregistrer achat;
-        end
         else (non)
         #FF9900:enregistrer 'echec';
         end
@@ -54,130 +54,60 @@ switch (besoin?)
         if (offre convenable) then (oui)
             :achat;
             #FFDD00:enregistrer achat;
+        else (non)
+            #FF9900:enregistrer 'echec';
+        end
 end if
-case (panne fatale)
-        :guider vers\n achat produit;
-    case (achat produit\n de remplacement)
-            #FF6666:décision achat\n produit de remplacement;
-endswitch
-'}
-note: cas sans prise\n de rdz-vs
-:suite;
+case (reparation\n autonome)
+        :réparation autonome;
+        while (non repare et \nnon abandon)
+            #palegreen:réparer;
+            :tester produit;
+        end while
+        if (produit réparé) then (oui)
+            #FFDD00:enregistrer réparation;
+        else (non)
+            if (aide souhaitée) then (non)
+                #FF9900:enregistrer 'echec';
+                end
+            else (oui)
+                #AAEEFF:dmd rdz-vs repair café.\n **+besoin accompagnement**;
+                end
+            end if
+        end if
+    case (besoin\n accompagnement)
+            #FFDD00:prendre rdv\n repair café;
 |#AntiqueWhite|Repair Café|
-:analyser la panne
-- avec l'utilisateur;
-if (état?) then (non réparable)
-    #FFDD00:enregistrer cause;
-    :informer utilisateur;
-  |Utilisateur|
-  #FF6666:décision achat\n produit de remplacement;
-  if (achat de\n remplacement) then (oui)
-    #FFDD00:demander liste de distributeurs;
-    :choisir et contacter;
-    :étudier offres;
-    if (offre convenable) then (oui)
-        :achat;
-        #FFDD00:enregistrer achat;
-        end
-    else (non)
-        #FF9900:enregistrer 'echec';
-        end
-    end if
-  else (non)
-    #FF9900:enregistrer 'echec';
-    end
-  end if
-  |#AntiqueWhite|Repair Café|
-elseif (besoins\n pièces?) then (non)
-  if (besoin\n accompagnement ?) then (non)
-  :transmettre\n indications\n à utilisateur;
-  |Utilisateur|
-  while (non repare et \nnon abandon)
-  #palegreen:réparer;
-  :tester produit;
-  end while
-  if (produit réparé) then (oui)
-    #FFDD00:enregistrer réparation;
-    end
-   else (non)
-    if (aide souhaitée) then (non)
-        #FF9900:enregistrer 'echec';
-        end
-    else (non)
-        #AAEEFF:dmd rdz-vs repair café.\n **+besoin accompagnement**;
-        end
-    end if
-  end if
-  |#AntiqueWhite|Repair Café|
-  else (oui)
-  while (non repare et \nnon abandon)
-    #palegreen:réparation\n avec utilisateur;
-    :tester produit;
-  end while
-  if (produit réparé) then (oui)
-      #FFDD00:enregistrer réparation;
-      end
-  else (non)
-      :analyser problème;
-      #FF9900:enregistrer 'echec';
-      switch (problème) 
-        case (pb pièce) 
-              :identifier pièce;
+while (non repare et \nnon abandon)
+#palegreen:réparation\n avec utilisateur;
+:tester produit;
+end while
+if (produit réparé) then (oui)
+#FFDD00:enregistrer réparation;
+end
+else (non)
+#FF9900:enregistrer 'echec';
+switch (analyser problème)
+case (pb pièce)
+:identifier pièce;
 '              note: cf. cas 'besoin pièce'
-        case (pb compétence)
-              :lister compétences\n nécessaires;
+case (pb compétence)
+:lister compétences\n nécessaires;
 '              note: cf. cas 'besoin pièce'
-        case (panne fatale)
-              :guider vers\n achat produit;
-      endswitch
-  end if
-  |Utilisateur|
-  #FFDD00:décider choisir RC, mag. pièces,\n distributeur, ou arrêter;
-  end
-  end if
-  |#AntiqueWhite|Repair Café|
-else (oui)
-  :identifier pièces;
-  :transmettre\n détails\n à utilisateur;
-endif
+case (panne fatale)
+:guider vers\n achat produit;
+endswitch
+end if
 |Utilisateur|
-  #FF6666::décision achat pièces;
-  if (achat de\n pièces) then (oui)
-      #FFDD00:demander liste de mag.\n de pièces détachées;
-      :choisir et contacter;
-      :étudier offres;
-      if (offre convenable) then (oui)
-          :achat;
-          #FFDD00:enregistrer achat;
-          if (réparation\n autonome) then (oui)
-              #palegreen:réparer;
-              :tester produit;
-              #FFDD00:enregistrer réparation;
-              end
-          else (non)
-              #FFDD00:dmd rdz-vs repair café;
-              end
-          end if
-      else (non)
-        #FF9900:enregistrer 'echec';
-        end
-      end if
-  elseif (achat de\n remplacement)
-      #FFDD00:demander liste de distributeurs;
-      :choisir et contacter;
-      :étudier offres;
-      if (offre convenable) then (oui)
-          :achat;
-        #FFDD00:enregistrer achat;
-          end
-      else (non)
-        #FF9900:enregistrer 'echec';    
-        end
-      end if
-    else (non)
-      #FF9900:enregistrer 'echec';
-      end
-    end if
+if (arret reparation) then (oui)
+#FF9900:enregistrer 'echec';
+end;
+end if
+endswitch
+endwhile
+#FFDD00:finaliser la transaction;
+end
+
   @enduml
 
 
