@@ -105,7 +105,7 @@ end;
 end if
 endswitch
 endwhile
-#FFDD00:finaliser la transaction;
+#FFDD00:clore l'acte de réparation;
 end
 
   @enduml
