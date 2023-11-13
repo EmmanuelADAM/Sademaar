@@ -42,7 +42,7 @@ public class UserAgent extends GuiAgent {
         this.window = UserGui.createUserGui(getLocalName(), this);//SimpleWindow4Agent(getLocalName(), this);
         println("Hello!");
         println("Choisissez un produit à réparer, votre niveau d'expérience dans la réparation de ce produit et envoyer un appel à l'aide");
-        println("Puis choisissez une option de répation qui vous est proposé");
+        println("Puis choisissez une option de réparation qui vous est proposé");
         println("-".repeat(30));
         helpers = new ArrayList<>(10);
     }

@@ -80,7 +80,7 @@
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <text value="Choix de réparation :"/>
+              <text value="Choix pour réparation :"/>
             </properties>
           </component>
           <component id="b8113" class="javax.swing.JComboBox" binding="comboChoixProduit">

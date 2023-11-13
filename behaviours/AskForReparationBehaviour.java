@@ -35,6 +35,7 @@ public class AskForReparationBehaviour extends ContractNetInitiator {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         a.getWindow().println(refuse.getSender().getLocalName() + "\tdecline ! ");
+        a.getWindow().println("\t - " + refuse.getContent());
     }
 
     /**function triggered when all the responses are received (or after the waiting time)
@@ -81,12 +82,7 @@ public class AskForReparationBehaviour extends ContractNetInitiator {
         } else {
             a.println("I have no proposal !!!! I'll retry later :-( ...... ");
         }
-
-
-
-
         a.getWindow().println("-".repeat(40));
-
     }
 
 

@@ -38,13 +38,19 @@ public class CFDemandResponder extends ContractNetResponder {
         myAgent.println("its level of expertise with this object is of %d/5".formatted(userLevel));
         ACLMessage answer = cfp.createReply();
         try {
-            rdzvs = LocalDateTime.now();
-            LocalDate date = LocalDate.now();
-            Random hasard = new Random();
-            date = date.plusDays(hasard.nextInt(15));
-            rdzvs = LocalDateTime.of(date, LocalTime.of(hasard.nextInt(8, 19), 0));
-            myAgent.println("I propose a rendez-vous at:" + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
-            answer.setContentObject(rdzvs);
+            if(myAgent.getSpecialites().contains(product.getSpec().getType())) {
+                rdzvs = LocalDateTime.now();
+                LocalDate date = LocalDate.now();
+                Random hasard = new Random();
+                date = date.plusDays(hasard.nextInt(15));
+                rdzvs = LocalDateTime.of(date, LocalTime.of(hasard.nextInt(8, 19), 0));
+                myAgent.println("I propose a rendez-vous at:" + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
+                answer.setContentObject(rdzvs);
+            }
+            else {
+                answer.setPerformative(ACLMessage.REFUSE);
+                answer.setContent("I'm not specialized in this type of object ("+product.getSpec().getType()+")");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
