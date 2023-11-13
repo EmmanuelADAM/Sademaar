@@ -62,7 +62,7 @@ public class CFDemandResponder extends ContractNetResponder {
         }
         else answer.setPerformative(ACLMessage.REFUSE);
 
-//      String choice = makeItsChoice(cfp.getContent());
+//              String choice = makeItsChoice(cfp.getContent());
         return answer;
     }
 
