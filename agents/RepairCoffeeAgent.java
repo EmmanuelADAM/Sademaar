@@ -1,10 +1,8 @@
 package agents;
 
-import behaviours.CFDemandResponder;
+import behaviours.CFRdzVsResponder;
 import data.ProductType;
 import jade.core.AgentServicesTools;
-import jade.gui.AgentWindowed;
-import jade.gui.GuiAgent;
 import jade.gui.SimpleWindow4Agent;
 import jade.lang.acl.MessageTemplate;
 
@@ -35,7 +33,7 @@ public class RepairCoffeeAgent extends RepairAgent {
         AgentServicesTools.register(this, "repair", "coffee");
         println("I'm just registered as a repair-coffee");
 
-        addBehaviour(new CFDemandResponder(this, MessageTemplate.MatchConversationId("ControlObject")));
+        addBehaviour(new CFRdzVsResponder(this, MessageTemplate.MatchConversationId("ControlObject")));
 
     }
 

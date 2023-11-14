@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AskForReparationBehaviour extends ContractNetInitiator {
+public class AskForRdzVsBehaviour extends ContractNetInitiator {
     UserAgent a;
-    public AskForReparationBehaviour(Agent a, ACLMessage cfp) {
+    public AskForRdzVsBehaviour(Agent a, ACLMessage cfp) {
         super(a, cfp);
         this.a = (UserAgent)a;
     }
@@ -45,7 +45,10 @@ public class AskForReparationBehaviour extends ContractNetInitiator {
     protected void handleAllResponses(List<ACLMessage> responses, List<ACLMessage> acceptances) {
         ArrayList<ACLMessage> listeProposals = new ArrayList<>(responses);
         ACLMessage bestProposal = null;
-        LocalDateTime bestDate = LocalDateTime.of(9999, 12, 31, 23, 59);
+        var bestDate = LocalDateTime.of(9999, 12, 31, 23, 59);
+        var currentDate = LocalDateTime.now();
+
+        double pref = 0.0;
         //we keep only the proposals only
         listeProposals.removeIf(v -> v.getPerformative() != ACLMessage.PROPOSE);
         acceptances.clear();

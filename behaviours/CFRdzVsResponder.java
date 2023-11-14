@@ -17,12 +17,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-public class CFDemandResponder extends ContractNetResponder {
+public class CFRdzVsResponder extends ContractNetResponder {
     Product product;
     int userLevel;
     RepairCoffeeAgent myAgent;
     LocalDateTime rdzvs;
-    public CFDemandResponder(RepairCoffeeAgent a, MessageTemplate mt) {
+    public CFRdzVsResponder(RepairCoffeeAgent a, MessageTemplate mt) {
         super(a, mt);myAgent = a;
     }
     //function triggered by a PROPOSE msg : send back the ranking

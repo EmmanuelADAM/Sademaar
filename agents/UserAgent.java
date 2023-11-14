@@ -9,13 +9,13 @@ import jade.domain.FIPANames;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
-import behaviours.AskForReparationBehaviour;
-import jade.lang.acl.MessageTemplate;
+import behaviours.AskForRdzVsBehaviour;
 
 import java.io.IOException;
 import java.util.*;
 
 public class UserAgent extends GuiAgent {
+    static final int MAXRATING = 5;
     /**
      * skill in "repairing" from 0 (not understand) to 5 (repairman like)
      */
@@ -26,6 +26,16 @@ public class UserAgent extends GuiAgent {
     List<AID> helpers;
 
     List<ProductImage> produits;
+
+    /**map aid of a repair agent to its evaluation*/
+    Map<AID, Integer> evaluationMap;
+
+    /**importance of the date to take a rdz-vs*/
+    double coefDate;
+    /**importance of the evaluation to take a rdz-vs*/
+    double coefEvaluation;
+    /**max days of patience for a rdz-vs*/
+    int patience;
 
     UserGui window;
     @Override
@@ -38,6 +48,10 @@ public class UserAgent extends GuiAgent {
         for(int i=0; i<nbProducts; i++){
             produits.add(new ProductImage(listProducts.get(i)));
         }
+        evaluationMap = new HashMap<>();
+        coefDate = ((int)(hasard.nextDouble()*10)+1)/10.0;
+        coefEvaluation = ((int)(hasard.nextDouble()*10)+1)/10.0;
+        patience = hasard.nextInt(3,21);
 
         this.window = UserGui.createUserGui(getLocalName(), this);//SimpleWindow4Agent(getLocalName(), this);
         println("Hello!");
@@ -50,10 +64,17 @@ public class UserAgent extends GuiAgent {
     @Override
     public void onGuiEvent(GuiEvent evt) {
         //I suppose there is only one type of event, clic on go
-        //search about repairing agents
+        //search about repair coffees
         helpers.clear();
         var tabAIDs = AgentServicesTools.searchAgents(this, "repair", "coffee");
         helpers.addAll(Arrays.stream(tabAIDs).toList());
+
+        //add the helpers to the map if they are not already there
+        for (AID helper : helpers) {
+            if (!evaluationMap.containsKey(helper)) {
+                evaluationMap.put(helper, MAXRATING);
+            }
+        }
 
         println("-".repeat(30));
 
@@ -65,6 +86,11 @@ public class UserAgent extends GuiAgent {
         println("-".repeat(30));
         var helpersLocalNames = helpers.stream().map(AID::getLocalName).toList();
         println("found this agent that could help me : " + helpersLocalNames);
+
+        println("-".repeat(30));
+        println("to make my choice, my preference about the date is of " + coefDate);
+        println("my preference about the evaluation of the repair cofee is of " + coefEvaluation);
+        println("and patience is of " + patience + " days max");
 
         println("-".repeat(30));
 
@@ -86,7 +112,7 @@ public class UserAgent extends GuiAgent {
         msg.setReplyByDate(new Date(System.currentTimeMillis() + 1000));
 
 
-        var askReparation = new AskForReparationBehaviour(this, msg);
+        var askReparation = new AskForRdzVsBehaviour(this, msg);
         addBehaviour(askReparation);
     }
 
