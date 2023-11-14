@@ -75,7 +75,7 @@ public class CFDemandResponder extends ContractNetResponder {
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         myAgent.println("=".repeat(15));
         myAgent.println(" I proposed a rdz-vs : " + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
-        myAgent.println(cfp.getSender().getLocalName() + " accepted my poposal and sent the result:  " + accept.getContent());
+        myAgent.println(cfp.getSender().getLocalName() + " accepted my proposal and sent the result:  " + accept.getContent());
         ACLMessage msg = accept.createReply();
         msg.setPerformative(ACLMessage.INFORM);
         msg.setContent("ok !");

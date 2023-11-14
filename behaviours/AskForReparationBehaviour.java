@@ -59,7 +59,7 @@ public class AskForReparationBehaviour extends ContractNetInitiator {
             //by default, we build a accept answer for each proposal
             var answer = proposal.createReply();
             answer.setPerformative(ACLMessage.REJECT_PROPOSAL);
-            answer.setContent("This rdz-vs doesn'fit with my agenda...");
+            answer.setContent("This rdz-vs doesn't with my agenda...");
             acceptances.add(answer);
             try {
                 creneau = (LocalDateTime) proposal.getContentObject();
@@ -80,7 +80,7 @@ public class AskForReparationBehaviour extends ContractNetInitiator {
             bestAnswer.setContent("I accept the rdz-vs...");
             a.println("I choose the proposal of " + bestProposal.getSender().getLocalName());
         } else {
-            a.println("I have no proposal !!!! I'll retry later :-( ...... ");
+            a.println("I got no proposal !!!! I'll retry later :-( ...... ");
         }
         a.getWindow().println("-".repeat(40));
     }
