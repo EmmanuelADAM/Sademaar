@@ -34,6 +34,8 @@ public class UserAgent extends GuiAgent {
     double coefDate;
     /**importance of the evaluation to take a rdz-vs*/
     double coefEvaluation;
+
+
     /**max days of patience for a rdz-vs*/
     int patience;
 
@@ -132,7 +134,13 @@ public class UserAgent extends GuiAgent {
     /**here we simplify the scenario. A breakdown is about 1 elt..
      * so whe choose a no between 1 to 4 and ask who can repair at at wich cost.*/
     private void breakdown(){
-
     }
 
+    public int getPatience() {
+        return patience;
+    }
+
+    public void setPatience(int patience) {
+        this.patience = patience;
+    }
 }

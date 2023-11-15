@@ -7,6 +7,7 @@ import jade.proto.ContractNetInitiator;
 import agents.UserAgent;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +46,15 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     protected void handleAllResponses(List<ACLMessage> responses, List<ACLMessage> acceptances) {
         ArrayList<ACLMessage> listeProposals = new ArrayList<>(responses);
         ACLMessage bestProposal = null;
-        var bestDate = LocalDateTime.of(9999, 12, 31, 23, 59);
+        var date = LocalDateTime.of(9999, 12, 31, 23, 59);
         var currentDate = LocalDateTime.now();
+        var currentSecond = currentDate.toEpochSecond(ZoneOffset.UTC);
+        //difference between dates in minutes
+        var dateGap = date.toEpochSecond(ZoneOffset.UTC) - currentSecond;
+        var patienceSec = patience * 60*60*24; //(86400)
+        var lastPossibleDate   = currentDate.plusDays(patience);
+
+
 
         double pref = 0.0;
         //we keep only the proposals only
