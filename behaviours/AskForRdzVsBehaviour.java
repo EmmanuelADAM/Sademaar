@@ -1,23 +1,32 @@
 package behaviours;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import agents.UserAgent;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class AskForRdzVsBehaviour extends ContractNetInitiator {
     UserAgent a;
+    LocalDateTime startingDate;
+    Map<AID, Integer> evaluationMap;
+
     public AskForRdzVsBehaviour(Agent a, ACLMessage cfp) {
         super(a, cfp);
         this.a = (UserAgent)a;
+        startingDate = LocalDateTime.now(ZoneOffset.UTC);
+        evaluationMap = this.a.getEvaluationMap();
     }
 
     //function triggered by a PROPOSE msg
@@ -27,9 +36,13 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     @Override
     public void handlePropose(ACLMessage propose, List<ACLMessage> acceptances) {
         LocalDateTime creneau = null;
-        try { creneau = (LocalDateTime)propose.getContentObject(); }
+        try {
+            creneau = (LocalDateTime)propose.getContentObject();
+            a.getWindow().println("%s\tproposes %s,\t my eval about it is %d/%d".formatted(propose.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")), evaluationMap.get(propose.getSender()), UserAgent.MAXRATING));
+//            var duration = Duration.between(startingDate, creneau);
+//            a.getWindow().println("\t in %d hours..".formatted(duration.toHours()));
+      }
         catch (UnreadableException e) { throw new RuntimeException(e);}
-        a.getWindow().println("%s\tproposes %s ".formatted(propose.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
     }
 
     //function triggered by a REFUSE msg
@@ -48,12 +61,10 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
         ACLMessage bestProposal = null;
         var date = LocalDateTime.of(9999, 12, 31, 23, 59);
         var currentDate = LocalDateTime.now();
-        var currentSecond = currentDate.toEpochSecond(ZoneOffset.UTC);
         //difference between dates in minutes
-        var dateGap = date.toEpochSecond(ZoneOffset.UTC) - currentSecond;
-        var patienceSec = a.getPatience() * 60*60*24; //(86400)
+        Duration dateGap = null;
+        var patienceHours = a.getPatience() *24;
         var lastPossibleDate   = currentDate.plusDays(a.getPatience());
-        var evaluationMap = a.getEvaluationMap();
 
 
 
@@ -80,8 +91,9 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
                 creneau = (LocalDateTime) proposal.getContentObject();
                 if (creneau.isBefore(lastPossibleDate))
                 {
-                    prefDate = (double) (creneau.toEpochSecond(ZoneOffset.UTC) - currentSecond) /patienceSec;
-                    prefEval = 1. - (double) evaluationMap.get(proposal.getSender()) /UserAgent.MAXRATING;
+                    dateGap = Duration.between(startingDate, creneau);
+                    prefDate = (double)dateGap.toHours()  / patienceHours;
+                    prefEval = Math.max(0, 1. - (double) evaluationMap.get(proposal.getSender()) /UserAgent.MAXRATING);
                     pref =  prefDate*a.getCoefDate() + prefEval*a.getCoefEvaluation();
                     if (pref<bestPref){
                         bestPref = pref;
@@ -94,7 +106,7 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
                 throw new RuntimeException(e);
             }
             a.println("%s\t has proposed %s ".formatted(proposal.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
-            a.println("\t prefDate=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefDate, prefEval, pref));
+            if (pref!=Double.MAX_VALUE) a.println("\t prefDate=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefDate, prefEval, pref));
         }
         a.println(".".repeat(30));
         if(bestAnswer!=null) {

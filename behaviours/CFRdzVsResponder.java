@@ -42,7 +42,7 @@ public class CFRdzVsResponder extends ContractNetResponder {
                 rdzvs = LocalDateTime.now();
                 LocalDate date = LocalDate.now();
                 Random hasard = new Random();
-                date = date.plusDays(hasard.nextInt(15));
+                date = date.plusDays(hasard.nextInt(1,15));
                 rdzvs = LocalDateTime.of(date, LocalTime.of(hasard.nextInt(8, 19), 0));
                 myAgent.println("I propose a rendez-vous at:" + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
                 answer.setContentObject(rdzvs);
