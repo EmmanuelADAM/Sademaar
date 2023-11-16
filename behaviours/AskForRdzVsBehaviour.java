@@ -51,12 +51,16 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
         var currentSecond = currentDate.toEpochSecond(ZoneOffset.UTC);
         //difference between dates in minutes
         var dateGap = date.toEpochSecond(ZoneOffset.UTC) - currentSecond;
-        var patienceSec = patience * 60*60*24; //(86400)
-        var lastPossibleDate   = currentDate.plusDays(patience);
+        var patienceSec = a.getPatience() * 60*60*24; //(86400)
+        var lastPossibleDate   = currentDate.plusDays(a.getPatience());
+        var evaluationMap = a.getEvaluationMap();
 
 
 
         double pref = 0.0;
+        double bestPref = Double.MAX_VALUE;
+        double prefDate = 0.0;
+        double prefEval = 0.0;
         //we keep only the proposals only
         listeProposals.removeIf(v -> v.getPerformative() != ACLMessage.PROPOSE);
         acceptances.clear();
@@ -74,16 +78,23 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
             acceptances.add(answer);
             try {
                 creneau = (LocalDateTime) proposal.getContentObject();
-                if (creneau.isBefore(bestDate))
+                if (creneau.isBefore(lastPossibleDate))
                 {
-                    bestDate = creneau;
-                    bestProposal = proposal;
-                    bestAnswer = answer;
+                    prefDate = (double) (creneau.toEpochSecond(ZoneOffset.UTC) - currentSecond) /patienceSec;
+                    prefEval = 1. - (double) evaluationMap.get(proposal.getSender()) /UserAgent.MAXRATING;
+                    pref =  prefDate*a.getCoefDate() + prefEval*a.getCoefEvaluation();
+                    if (pref<bestPref){
+                        bestPref = pref;
+                        bestProposal = proposal;
+                        bestAnswer = answer;
+                    }
                 }
+                else prefDate = prefEval = pref = Double.MAX_VALUE;
             } catch (UnreadableException e) {
                 throw new RuntimeException(e);
             }
             a.println("%s\t has proposed %s ".formatted(proposal.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
+            a.println("\t prefDate=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefDate, prefEval, pref));
         }
         a.println(".".repeat(30));
         if(bestAnswer!=null) {
@@ -101,7 +112,7 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     //function triggered by a INFORM msg : a voter accept the result
     // @Override
     protected void handleInform(ACLMessage inform) {
-        a.getWindow().println("the vote is accepted by " + inform.getSender().getLocalName());
+        a.getWindow().println("the rdz-vs is accepted by " + inform.getSender().getLocalName());
     }
 
 

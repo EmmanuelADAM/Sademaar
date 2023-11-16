@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class UserAgent extends GuiAgent {
-    static final int MAXRATING = 5;
+    public static final int MAXRATING = 5;
     /**
      * skill in "repairing" from 0 (not understand) to 5 (repairman like)
      */
@@ -67,15 +67,14 @@ public class UserAgent extends GuiAgent {
     public void onGuiEvent(GuiEvent evt) {
         //I suppose there is only one type of event, clic on go
         //search about repair coffees
+        Random hasard = new Random();
         helpers.clear();
         var tabAIDs = AgentServicesTools.searchAgents(this, "repair", "coffee");
         helpers.addAll(Arrays.stream(tabAIDs).toList());
 
         //add the helpers to the map if they are not already there
         for (AID helper : helpers) {
-            if (!evaluationMap.containsKey(helper)) {
-                evaluationMap.put(helper, MAXRATING);
-            }
+            evaluationMap.computeIfAbsent(helper, k -> hasard.nextInt(MAXRATING)+1);
         }
 
         println("-".repeat(30));
@@ -142,5 +141,25 @@ public class UserAgent extends GuiAgent {
 
     public void setPatience(int patience) {
         this.patience = patience;
+    }
+
+    public Map<AID, Integer> getEvaluationMap() {
+        return evaluationMap;
+    }
+
+    public double getCoefDate() {
+        return coefDate;
+    }
+
+    public void setCoefDate(double coefDate) {
+        this.coefDate = coefDate;
+    }
+
+    public double getCoefEvaluation() {
+        return coefEvaluation;
+    }
+
+    public void setCoefEvaluation(double coefEvaluation) {
+        this.coefEvaluation = coefEvaluation;
     }
 }
