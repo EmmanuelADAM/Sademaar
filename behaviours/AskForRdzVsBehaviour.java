@@ -59,7 +59,6 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     protected void handleAllResponses(List<ACLMessage> responses, List<ACLMessage> acceptances) {
         ArrayList<ACLMessage> listeProposals = new ArrayList<>(responses);
         ACLMessage bestProposal = null;
-        var date = LocalDateTime.of(9999, 12, 31, 23, 59);
         var currentDate = LocalDateTime.now();
         //difference between dates in minutes
         Duration dateGap = null;
