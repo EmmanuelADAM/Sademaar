@@ -13,7 +13,7 @@ public class RepairRequestResponder extends AchieveREResponder {
 
     @Override
     public ACLMessage handleRequest(ACLMessage request){
-
+        ACLMessage answer = null;
         return null;
     }
 }
