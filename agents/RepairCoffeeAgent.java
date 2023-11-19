@@ -44,6 +44,14 @@ public class RepairCoffeeAgent extends RepairAgent {
         return specialites;
     }
 
+    public void addRdzVs(AID aid, LocalDateTime rdzvs){
+        maprdzvs.compute(aid, (k, v) -> {
+            if (v == null)  v =new ArrayList<LocalDateTime>();
+            v.add(rdzvs);
+            return v;
+        });
+    }
+
     public Map<AID, List<LocalDateTime>> getMaprdzvs() {
         return maprdzvs;
     }

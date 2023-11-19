@@ -77,14 +77,9 @@ public class CFRdzVsResponder extends ContractNetResponder {
         myAgent.println("=".repeat(15));
         myAgent.println(" I proposed a rdz-vs : " + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
         myAgent.println(cfp.getSender().getLocalName() + " accepted my proposal and sent the result:  " + accept.getContent());
-        var map = myAgent.getMaprdzvs();
-        map.compute(cfp.getSender(), (k, v) -> {
-            if (v == null)  v =new ArrayList<LocalDateTime>();
-            v.add(rdzvs);
-            return v;
-        });
+        myAgent.addRdzVs(cfp.getSender(), rdzvs);
         myAgent.println(" my rendez-vous : ");
-        map.forEach((k, v) ->  myAgent.println("\t with agent %s : %s".formatted(k.getLocalName(), v)));
+        myAgent.getMaprdzvs().forEach((k, v) ->  myAgent.println("\t with agent %s : %s".formatted(k.getLocalName(), v)));
         ACLMessage msg = accept.createReply();
         msg.setPerformative(ACLMessage.INFORM);
         msg.setContent("ok !");
