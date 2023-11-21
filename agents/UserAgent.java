@@ -14,6 +14,12 @@ import behaviours.AskForRdzVsBehaviour;
 import java.io.IOException;
 import java.util.*;
 
+/** an agent that represent a user
+ * - the user choose an object to repair, define its level of expertise regarding it
+ * - the user can ask for a rendez-vous to repair coffee agents (it sends the details about the objetc)
+ *  - the choice is based on the date and confidence about the repair coffee
+ * - next, the user request for a repair to the repair coffee agent with which it has a rendez-vous
+ * */
 public class UserAgent extends GuiAgent {
     public static final int MAXRATING = 5;
     /**
