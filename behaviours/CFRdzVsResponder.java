@@ -82,7 +82,7 @@ public class CFRdzVsResponder extends ContractNetResponder {
         myAgent.getMaprdzvs().forEach((k, v) ->  myAgent.println("\t with agent %s : %s".formatted(k.getLocalName(), v)));
         ACLMessage msg = accept.createReply();
         msg.setPerformative(ACLMessage.INFORM);
-        msg.setContent("ok !");
+        try { msg.setContentObject(rdzvs); } catch (IOException e) {throw new RuntimeException(e);}
         return msg;
     }
 

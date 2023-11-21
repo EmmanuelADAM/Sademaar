@@ -1,12 +1,11 @@
 package gui;
 
 import agents.UserAgent;
-import data.Product;
 import data.ProductImage;
-import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
 
 public class UserGui {
     public static int OK_EVENT = 1;
@@ -19,7 +18,7 @@ public class UserGui {
     private JLabel jlChoixProduit;
     private JLabel jlChoixOffre;
     private JComboBox<ProductImage> comboChoixProduit;
-    private JComboBox comboReparation;
+    private JComboBox comboRdzVs;
 
     private UserAgent agent;
     UserGui(){
@@ -61,5 +60,9 @@ public class UserGui {
     }
     public int getLevel(){
         return slideNiveau.getValue();
+    }
+
+    public void addRdzVs(LocalDateTime rdzVs) {
+        comboRdzVs.addItem(rdzVs);
     }
 }

@@ -7,6 +7,7 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import agents.UserAgent;
 
+import javax.swing.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -124,6 +125,10 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     // @Override
     protected void handleInform(ACLMessage inform) {
         a.getWindow().println("the rdz-vs is accepted by " + inform.getSender().getLocalName());
+        LocalDateTime rdzVs = null;
+        try { rdzVs = (LocalDateTime) inform.getContentObject();}
+        catch (UnreadableException e) { throw new RuntimeException(e);}
+        a.addRdzVs(rdzVs);
     }
 
 
