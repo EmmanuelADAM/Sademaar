@@ -6,6 +6,6 @@ public class RendezVs {
     LocalDateTime date;
     AID userAgent;
     AID repairAgent;
-
-
+    Product product;
+    StateRepair state;
 }
