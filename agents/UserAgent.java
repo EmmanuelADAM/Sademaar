@@ -2,6 +2,7 @@ package agents;
 
 import data.Product;
 import data.ProductImage;
+import data.Repair;
 import gui.UserGui;
 import jade.core.AID;
 import jade.core.AgentServicesTools;
@@ -34,7 +35,9 @@ public class UserAgent extends GuiAgent {
     List<AID> helpers;
 
     /**data used by the user to represent its products*/
-    List<ProductImage> produits;
+    List<ProductImage> products;
+    /**data used by the user to represent its products*/
+    List<Repair> repairs;
 
     /**map each aid of a repair agent to its evaluation*/
     Map<AID, Integer> evaluationMap;
@@ -58,12 +61,13 @@ public class UserAgent extends GuiAgent {
         //rchoose randomly some products among the existent
         Random hasard = new Random();
         int nbProducts = hasard.nextInt(1,Product.NB_PRODS/20);
-        produits = new ArrayList<>(nbProducts);
+        products = new ArrayList<>(nbProducts);
         var listProducts = Product.getListProducts();
         Collections.shuffle(listProducts);
-        for(int i=0; i<nbProducts; i++)  produits.add(new ProductImage(listProducts.get(i)));
+        for(int i=0; i<nbProducts; i++)  products.add(new ProductImage(listProducts.get(i)));
         //init the coefs
         evaluationMap = new HashMap<>();
+        repairs = new ArrayList<>();
         coefDate = ((int)(hasard.nextDouble()*10)+1)/10.0;
         coefEvaluation = ((int)(hasard.nextDouble()*10)+1)/10.0;
         patience = hasard.nextInt(3,21);
@@ -138,8 +142,8 @@ public class UserAgent extends GuiAgent {
 
     public UserGui getWindow(){return window;}
 
-    public List<ProductImage> getProduits() {
-        return produits;
+    public List<ProductImage> getProducts() {
+        return products;
     }
 
 

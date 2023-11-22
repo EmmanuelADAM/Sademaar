@@ -36,7 +36,7 @@ public class UserGui {
         frame.pack();
         frame.setVisible(true);
         userGui.jbOk.addActionListener(e -> agent.postGuiEvent(new GuiEvent(e,OK_EVENT)));
-        var produits =  agent.getProduits();
+        var produits =  agent.getProducts();
         produits.forEach(userGui.comboChoixProduit::addItem);
 
         return userGui;

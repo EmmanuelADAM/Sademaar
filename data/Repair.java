@@ -4,6 +4,7 @@ import agents.RepairAgent;
 import agents.UserAgent;
 import java.util.List;
 
+/***/
 public class Repair {
     UserAgent owner;
     Product product;
@@ -11,4 +12,7 @@ public class Repair {
     RepairAgent repairAgent;
     boolean success;
     int evaluation;
+    StateRepair state;
+    boolean needNewProduct;
+    boolean needParts;
 }
