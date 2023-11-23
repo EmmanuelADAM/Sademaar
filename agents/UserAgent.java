@@ -2,6 +2,7 @@ package agents;
 
 import data.Product;
 import data.ProductImage;
+import data.RendezVs;
 import data.Repair;
 import gui.UserGui;
 import jade.core.AID;
@@ -38,6 +39,8 @@ public class UserAgent extends GuiAgent {
     List<ProductImage> products;
     /**data used by the user to represent its products*/
     List<Repair> repairs;
+
+    Repair currentRepair;
 
     /**map each aid of a repair agent to its evaluation*/
     Map<AID, Integer> evaluationMap;
@@ -85,6 +88,10 @@ public class UserAgent extends GuiAgent {
      * - ask for a rendez-vous*/
     public void onGuiEvent(GuiEvent evt) {
         //for the moment, I suppose there is only one type of event, click on go
+        ask4Repair();
+    }
+
+    private void ask4Repair() {
         //- search about repair coffees
         Random hasard = new Random();
         helpers.clear();
@@ -93,10 +100,13 @@ public class UserAgent extends GuiAgent {
         //add the helpers to the map if they are not already there (the give a random level of confidence)
         helpers.forEach(helper->evaluationMap.computeIfAbsent(helper, k -> hasard.nextInt(MAXRATING)+1));
 
+        ProductImage pi = window.getProduct();
+        currentRepair = new Repair(getAID(), pi);
+        repairs.add(currentRepair);
+        window.addRepair(currentRepair);
         //some blabla
         println("-".repeat(30));
 
-        ProductImage pi = window.getProduct();
         println("I want to repair this : " + pi);
         int level = window.getLevel();
         println("My skill to repair this product is of : " + window.getLevel());
@@ -129,8 +139,7 @@ public class UserAgent extends GuiAgent {
         msg.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
         msg.setReplyByDate(new Date(System.currentTimeMillis() + 1000));
 
-
-        var askReparation = new AskForRdzVsBehaviour(this, msg);
+        var askReparation = new AskForRdzVsBehaviour(this, msg, pi);
         addBehaviour(askReparation);
     }
 
@@ -180,7 +189,8 @@ public class UserAgent extends GuiAgent {
         this.coefEvaluation = coefEvaluation;
     }
 
-    public void addRdzVs(LocalDateTime rdzVs){
-        window.addRdzVs(rdzVs);
+    public void addRdzVs(RendezVs rdzVs){
+        currentRepair.addRendezVs(rdzVs);
+        window.addRepairRdzVs(rdzVs);
     }
 }

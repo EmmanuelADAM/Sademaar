@@ -2,9 +2,15 @@ package gui;
 
 import agents.UserAgent;
 import data.ProductImage;
+import data.RendezVs;
+import data.Repair;
 import jade.gui.GuiEvent;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.time.LocalDateTime;
 
 public class UserGui {
@@ -16,9 +22,11 @@ public class UserGui {
     private JLabel jlNiveau;
     private JSlider slideNiveau;
     private JLabel jlChoixProduit;
-    private JLabel jlChoixOffre;
+    private JLabel jlRepairs;
     private JComboBox<ProductImage> comboChoixProduit;
-    private JComboBox comboRdzVs;
+    private JLabel jlRdzVs;
+    private JComboBox<Repair> comboRepairs;
+    private JComboBox<RendezVs> comboRepairRdzVs;
 
     private UserAgent agent;
     UserGui(){
@@ -38,6 +46,11 @@ public class UserGui {
         userGui.jbOk.addActionListener(e -> agent.postGuiEvent(new GuiEvent(e,OK_EVENT)));
         var produits =  agent.getProducts();
         produits.forEach(userGui.comboChoixProduit::addItem);
+        userGui.comboRepairs.addItemListener(e -> {
+            userGui.comboRepairRdzVs.removeAllItems();
+            Repair repair = (Repair)userGui.comboRepairs.getSelectedItem();
+            repair.getListRendezVs().forEach(userGui.comboRepairRdzVs::addItem);
+        });
 
         return userGui;
     }
@@ -62,7 +75,11 @@ public class UserGui {
         return slideNiveau.getValue();
     }
 
-    public void addRdzVs(LocalDateTime rdzVs) {
-        comboRdzVs.addItem(rdzVs);
+
+    public void addRepair(Repair repair) {
+        comboRepairs.addItem(repair);
+    }
+    public void addRepairRdzVs(RendezVs rdzVs) {
+        comboRepairRdzVs.addItem(rdzVs);
     }
 }

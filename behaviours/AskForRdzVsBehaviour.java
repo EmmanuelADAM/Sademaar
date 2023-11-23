@@ -1,5 +1,9 @@
 package behaviours;
 
+import data.Product;
+import data.ProductImage;
+import data.RendezVs;
+import data.StateRepair;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -22,10 +26,12 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     UserAgent a;
     LocalDateTime startingDate;
     Map<AID, Integer> evaluationMap;
+    ProductImage pi;
 
-    public AskForRdzVsBehaviour(Agent a, ACLMessage cfp) {
+    public AskForRdzVsBehaviour(Agent a, ACLMessage cfp, ProductImage pi) {
         super(a, cfp);
         this.a = (UserAgent)a;
+        this.pi = pi;
         startingDate = LocalDateTime.now(ZoneOffset.UTC);
         evaluationMap = this.a.getEvaluationMap();
     }
@@ -125,10 +131,11 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     // @Override
     protected void handleInform(ACLMessage inform) {
         a.getWindow().println("the rdz-vs is accepted by " + inform.getSender().getLocalName());
-        LocalDateTime rdzVs = null;
-        try { rdzVs = (LocalDateTime) inform.getContentObject();}
+        LocalDateTime dateRdzVs = null;
+        try { dateRdzVs = (LocalDateTime) inform.getContentObject();}
         catch (UnreadableException e) { throw new RuntimeException(e);}
-        a.addRdzVs(rdzVs);
+        RendezVs rdzvs = new RendezVs(dateRdzVs, myAgent.getAID(), inform.getSender(),   pi.getP(), StateRepair.RdzVs);
+        a.addRdzVs(rdzvs);
     }
 
 
