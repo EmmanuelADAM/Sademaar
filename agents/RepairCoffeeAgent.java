@@ -1,7 +1,9 @@
 package agents;
 
 import behaviours.CFRdzVsResponder;
+import behaviours.RepairRequestResponder;
 import data.ProductType;
+import data.StateRepair;
 import jade.core.AID;
 import jade.core.AgentServicesTools;
 import jade.gui.SimpleWindow4Agent;
@@ -36,7 +38,7 @@ public class RepairCoffeeAgent extends RepairAgent {
         AgentServicesTools.register(this, "repair", "coffee");
         println("I'm just registered as a repair-coffee");
 
-        addBehaviour(new CFRdzVsResponder(this, MessageTemplate.MatchConversationId("ControlObject")));
+        addBehaviour(new CFRdzVsResponder(this, MessageTemplate.MatchConversationId(StateRepair.Ask4RdzVs.toString())));
 
     }
 
@@ -50,6 +52,9 @@ public class RepairCoffeeAgent extends RepairAgent {
             v.add(rdzvs);
             return v;
         });
+
+        MessageTemplate mt = MessageTemplate.MatchSender(aid);
+        addBehaviour(new RepairRequestResponder(this, mt));
     }
 
     public Map<AID, List<LocalDateTime>> getMaprdzvs() {

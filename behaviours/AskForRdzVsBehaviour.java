@@ -121,6 +121,7 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
             a.println("I choose the proposal of " + bestProposal.getSender().getLocalName());
         } else {
             a.println("I got no proposal !!!! I'll retry later :-( ...... ");
+            a.setCurrentRepair(null);
         }
         a.getWindow().println("-".repeat(40));
     }

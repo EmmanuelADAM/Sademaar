@@ -30,6 +30,7 @@ public class CFRdzVsResponder extends ContractNetResponder {
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
         myAgent.println("~".repeat(40));
+        myAgent.println(cfp.toString());
         Object[]tabContent = null;
         try {  tabContent = (Object[])cfp.getContentObject();
         } catch (UnreadableException e) { throw new RuntimeException(e);}
@@ -83,6 +84,7 @@ public class CFRdzVsResponder extends ContractNetResponder {
         ACLMessage msg = accept.createReply();
         msg.setPerformative(ACLMessage.INFORM);
         try { msg.setContentObject(rdzvs); } catch (IOException e) {throw new RuntimeException(e);}
+        myAgent.addBehaviour(new RepairRequestResponder(myAgent, MessageTemplate.MatchPerformative(ACLMessage.REQUEST)));
         return msg;
     }
 

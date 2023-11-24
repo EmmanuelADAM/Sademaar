@@ -1,9 +1,7 @@
 package agents;
 
-import data.Product;
-import data.ProductImage;
-import data.RendezVs;
-import data.Repair;
+import behaviours.RepairRequestInitiator;
+import data.*;
 import gui.UserGui;
 import jade.core.AID;
 import jade.core.AgentServicesTools;
@@ -87,11 +85,24 @@ public class UserAgent extends GuiAgent {
     /**on event from the gui :
      * - ask for a rendez-vous*/
     public void onGuiEvent(GuiEvent evt) {
+        ProductImage pi = null;
+        if(currentRepair==null) {
+            pi = window.getProduct();
+            currentRepair = new Repair(getAID(), pi);
+            repairs.add(currentRepair);
+            window.addRepair(currentRepair);
+            println("I want to repair this : " + pi);
+        }
+
         //for the moment, I suppose there is only one type of event, click on go
-        ask4Repair();
+        switch(currentRepair.getState()){
+            case Ask4RdzVs -> ask4RdzVs(pi);
+            case RdzVs ->  ask4Repair();
+            case Done -> repairDone();
+        }
     }
 
-    private void ask4Repair() {
+    private void ask4RdzVs(ProductImage pi) {
         //- search about repair coffees
         Random hasard = new Random();
         helpers.clear();
@@ -100,14 +111,9 @@ public class UserAgent extends GuiAgent {
         //add the helpers to the map if they are not already there (the give a random level of confidence)
         helpers.forEach(helper->evaluationMap.computeIfAbsent(helper, k -> hasard.nextInt(MAXRATING)+1));
 
-        ProductImage pi = window.getProduct();
-        currentRepair = new Repair(getAID(), pi);
-        repairs.add(currentRepair);
-        window.addRepair(currentRepair);
         //some blabla
         println("-".repeat(30));
 
-        println("I want to repair this : " + pi);
         int level = window.getLevel();
         println("My skill to repair this product is of : " + window.getLevel());
 
@@ -125,6 +131,19 @@ public class UserAgent extends GuiAgent {
         addCFP(pi, level);
     }
 
+    private void ask4Repair(){
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        msg.setConversationId(StateRepair.Ask4Repair.toString());
+        msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        msg.setContent("repair please");
+        msg.addReceiver(currentRepair.getListRendezVs().getLast().repairAgent());
+        addBehaviour(new RepairRequestInitiator(this, msg));
+
+    }
+
+    private void repairDone(){
+    }
+
     /**add a CFP from user to list of helpers*/
     private void addCFP(ProductImage pi, int level)  {
         ACLMessage msg = new ACLMessage(ACLMessage.CFP);
@@ -135,7 +154,7 @@ public class UserAgent extends GuiAgent {
         msg.addReceivers(helpers.toArray(AID[]::new));
         println("-".repeat(40));
 
-        msg.setConversationId("ControlObject");
+        msg.setConversationId(StateRepair.Ask4RdzVs.toString());
         msg.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
         msg.setReplyByDate(new Date(System.currentTimeMillis() + 1000));
 
@@ -192,5 +211,13 @@ public class UserAgent extends GuiAgent {
     public void addRdzVs(RendezVs rdzVs){
         currentRepair.addRendezVs(rdzVs);
         window.addRepairRdzVs(rdzVs);
+    }
+
+    public Repair getCurrentRepair() {
+        return currentRepair;
+    }
+
+    public void setCurrentRepair(Repair currentRepair) {
+        this.currentRepair = currentRepair;
     }
 }
