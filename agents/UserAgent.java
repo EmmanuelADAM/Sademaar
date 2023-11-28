@@ -61,11 +61,18 @@ public class UserAgent extends GuiAgent {
     public void setup() {
         //rchoose randomly some products among the existent
         Random hasard = new Random();
-        int nbProducts = hasard.nextInt(1,Product.NB_PRODS/20);
-        products = new ArrayList<>(nbProducts);
-        var listProducts = Product.getListProducts();
-        Collections.shuffle(listProducts);
-        for(int i=0; i<nbProducts; i++)  products.add(new ProductImage(listProducts.get(i)));
+        //add some products choosen randomly in the list Product.getListProducts()
+        products = new ArrayList<>();
+        int nbTypeOfProducts = ProductType.values().length;
+        int nbPoductsByType = Product.NB_PRODS / nbTypeOfProducts;
+        var existingProducts = Product.getListProducts();
+        //add products
+        for(int i=0; i<nbTypeOfProducts; i++)
+            if(hasard.nextBoolean())
+                products.add(new ProductImage(existingProducts.get(hasard.nextInt(nbPoductsByType) + (i*nbPoductsByType))));
+        //we need at least one product
+        if(products.isEmpty())  products.add(new ProductImage(existingProducts.get(hasard.nextInt(nbPoductsByType*nbTypeOfProducts))));
+
         //init the coefs
         evaluationMap = new HashMap<>();
         repairs = new ArrayList<>();
