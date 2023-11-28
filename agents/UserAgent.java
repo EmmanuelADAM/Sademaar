@@ -61,7 +61,7 @@ public class UserAgent extends GuiAgent {
     public void setup() {
         //rchoose randomly some products among the existent
         Random hasard = new Random();
-        int nbProducts = hasard.nextInt(1,Product.NB_PRODS/20);
+        int nbProducts = hasard.nextInt(1,ProductType.values().length);
         products = new ArrayList<>(nbProducts);
         var listProducts = Product.getListProducts();
         Collections.shuffle(listProducts);

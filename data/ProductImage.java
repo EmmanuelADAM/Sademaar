@@ -40,7 +40,7 @@ public class ProductImage implements Serializable {
 
     public static void main(String[] args)
     {
-        var list = ProductSpec.getListProductType();
+        var list = ProductSpec.getListProductSpec();
         list.forEach(System.out::println);
     }
 }
