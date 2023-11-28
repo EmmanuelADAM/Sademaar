@@ -11,30 +11,36 @@ public class Product implements Serializable {
     double price;
     static int nbProducts = 0;
     public static List<Product> listProducts;
-    public static final int NB_PRODS = 100;
+    public static final int VARIATION = 30;
+    public static final int VARIATIONSTEP = 10;
 
     Product(String name, ProductSpec type){
         this.name = name;
         this.spec = type;
-        price = type.getPrice()*(1.+Math.random()*.1);
+        price = type.getStandardPrice();
         id = ++nbProducts;
     }
 
-    @Override
+    Product(String name, ProductSpec type, double price){
+        this(name,type);
+        this.price = price;
+    }
+
+
+        @Override
     public String toString() {
         return String.format("Product{ %d : %s - %s - %.2f€}", id, name, spec, price);
     }
 
 
     static public List<Product> getListProducts() {
-        if (listProducts == null) {
-            listProducts = new ArrayList<>(NB_PRODS);
+         if (listProducts == null) {
+            listProducts = new ArrayList<>(2*VARIATION/VARIATIONSTEP + VARIATIONSTEP);
             int nbSpec = ProductType.values().length;
-            int nbBySpec = NB_PRODS /nbSpec;
-            var listeType = ProductSpec.getListProductType();
-            for(var type:listeType){
-                for(int i=0; i<nbBySpec; i++) {
-                    listProducts.add(new Product(type.getType().name()+"-"+ i, type));
+            var listeSpec = ProductSpec.getListProductSpec();
+            for(var type:listeSpec){
+                for(int i=-VARIATION; i<=VARIATION; i+=VARIATIONSTEP) {
+                    listProducts.add(new Product(type.getType().name()+"-"+ (i<0?"M"+(-i):"P"+i)  , type, type.getStandardPrice() * (1+i/100d)));
                 }
             }
         }
@@ -55,6 +61,10 @@ public class Product implements Serializable {
 
     public double getPrice() {
         return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public static void main(String[] args)

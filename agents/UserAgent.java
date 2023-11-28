@@ -64,7 +64,7 @@ public class UserAgent extends GuiAgent {
         //add some products choosen randomly in the list Product.getListProducts()
         products = new ArrayList<>();
         int nbTypeOfProducts = ProductType.values().length;
-        int nbPoductsByType = Product.NB_PRODS / nbTypeOfProducts;
+        int nbPoductsByType = 2*Product.VARIATION/Product.VARIATIONSTEP +1;
         var existingProducts = Product.getListProducts();
         //add products
         for(int i=0; i<nbTypeOfProducts; i++)

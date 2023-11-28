@@ -1,5 +1,6 @@
 package launch;
 
+import data.ProductSpec;
 import jade.core.Runtime;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -20,6 +21,10 @@ public class LaunchAgents {
         System.out.println("- Les produits existants - ");
         var tab = Product.getListProducts();
         for(var p:tab)  System.out.println(p);
+        System.out.println("-".repeat(20));
+        System.out.println("- Les parties existantes - ");
+        for(var p: ProductSpec.listSmallParts)  System.out.println(p);
+        for(var p: ProductSpec.listBigParts)  System.out.println(p);
         System.out.println("-".repeat(20));
         // preparer les arguments pout le conteneur JADE
         Properties prop = new ExtendedProperties();
