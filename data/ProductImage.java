@@ -35,7 +35,7 @@ public class ProductImage implements Serializable {
     }
 
     public Product getP() {
-        return p;
+        return p ;
     }
 
     public static void main(String[] args)

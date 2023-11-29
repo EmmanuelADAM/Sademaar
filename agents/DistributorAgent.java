@@ -22,7 +22,7 @@ public class DistributorAgent extends RepairAgent {
         println("I'm just registered as a Distributor");
 
         productList = new ArrayList<>();
-        var l = Product.getListProducts();
+        var l = Product.getListProducts() ;
         for(var p:l)
             if(Math.random()<0.35) productList.add(p);
         // I have my own prices

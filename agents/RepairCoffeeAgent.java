@@ -43,7 +43,7 @@ public class RepairCoffeeAgent extends RepairAgent {
     }
 
     public List<ProductType> getSpecialites() {
-        return specialites;
+        return specialites ;
     }
 
     public void addRdzVs(AID aid, LocalDateTime rdzvs){

@@ -7,6 +7,6 @@ public record Part(String name, int serialNumber, int difficulty, double price) 
         this(p.name, p.serialNumber, p.difficulty, p.price*priceVariation);
     }
     public String toString() {
-        return String.format("Part{ ref. %d : %s - diff. %d - %.2f€}", serialNumber, name, difficulty, price);
+        return String.format("Part{ ref. %d : %s - diff. %d - %.2f€}", serialNumber, name, difficulty, price) ;
     }
 }

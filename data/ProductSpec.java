@@ -70,7 +70,7 @@ public class ProductSpec implements Serializable {
 
     public static List<Part> getListSmallParts() {
         if(listSmallParts==null) getListProductSpec();
-        return listSmallParts;
+        return listSmallParts ;
     }
 
     public static List<Part> getListBigParts() {

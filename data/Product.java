@@ -64,7 +64,7 @@ public class Product implements Serializable {
     }
 
     public void setPrice(double price) {
-        this.price = price;
+        this.price = price ;
     }
 
     public static void main(String[] args)

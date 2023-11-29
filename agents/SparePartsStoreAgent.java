@@ -17,7 +17,7 @@ public class SparePartsStoreAgent extends RepairAgent {
     public void setup(){
         this.window = new SimpleWindow4Agent(getLocalName(),this);
         this.window.setBackgroundTextColor(Color.cyan);
-        println("hello, do you want a piece of something ?");
+        println("Hello, do you want a piece of something ?");
 
         //registration to the yellow pages (Directory Facilitator Agent)
         AgentServicesTools.register(this, "repair", "SparePartsStore");
