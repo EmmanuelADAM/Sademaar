@@ -30,27 +30,30 @@ public class ProductSpec implements Serializable {
             for (int i = spec.nbSmallParts - 1; i > 0; i--) {
                 partPrice = partsPrice * 2 / 3;
                 partsPrice = partsPrice - partPrice;
-                pn.smallParts[i] = new Part(spec.name() + "sp" + i, (spec.ordinal() + 1) * 100 + i, rand.nextInt(1, 3),
-                        partPrice);
+                pn.smallParts[i] = new Part(spec.name() + "-sp" + i, (spec.ordinal() + 1) * 100 + i, rand.nextInt(1, 3),
+                        partPrice, false);
                 listSmallParts.add(pn.smallParts[i]);
             }
-            pn.smallParts[0] = new Part(spec.name() + "sp0", (spec.ordinal() + 1) * 100, rand.nextInt(1, 3),
-                    partsPrice);
+            pn.smallParts[0] = new Part(spec.name() + "-sp0", (spec.ordinal() + 1) * 100, rand.nextInt(1, 3),
+                    partsPrice, false);
             listSmallParts.add(pn.smallParts[0]);
         }
         if(spec.nbBigParts>0) {
+            boolean danger = false;
             pn.bigParts = new Part[spec.nbBigParts];
             double partsPrice = 2 * spec.standardPrice / 3d;
             double partPrice = 0;
             for (int i = spec.nbBigParts - 1; i > 0; i--) {
                 partPrice = partsPrice * 2 / 3;
                 partsPrice = partsPrice - partPrice;
-                pn.bigParts[i] = new Part(spec.name() + "Bp" + i, (spec.ordinal() + 1) * 1000 + i, rand.nextInt(1, 3),
-                        partPrice);
+                danger = (spec.isDanger() && i==spec.nbBigParts-1);
+                pn.bigParts[i] = new Part(spec.name() + "-Bp" + i, (spec.ordinal() + 1) * 1000 + i, rand.nextInt(1, 3),
+                        partPrice, danger);
                 listBigParts.add(pn.bigParts[i]);
             }
-            pn.bigParts[0] = new Part(spec.name() + "Bp0", (spec.ordinal() + 1) * 1000, rand.nextInt(1, 3),
-                    partsPrice);
+            danger = (spec.nbBigParts==1);
+            pn.bigParts[0] = new Part(spec.name() + "-Bp0", (spec.ordinal() + 1) * 1000, rand.nextInt(1, 3),
+                    partsPrice, danger);
             listBigParts.add(pn.bigParts[0]);
         }
         pn.standardPrice = spec.standardPrice;

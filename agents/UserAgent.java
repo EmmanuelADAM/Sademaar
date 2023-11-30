@@ -142,10 +142,10 @@ public class UserAgent extends GuiAgent {
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
         msg.setConversationId(StateRepair.Ask4Repair.toString());
         msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-        msg.setContent("repair please");
+        Product p = currentRepair.getProductImg().getP();
+        try { msg.setContentObject(p);} catch (IOException e) { throw new RuntimeException(e); }
         msg.addReceiver(currentRepair.getListRendezVs().getLast().repairAgent());
         addBehaviour(new RepairRequestInitiator(this, msg));
-
     }
 
     private void repairDone(){

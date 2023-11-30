@@ -1,8 +1,10 @@
 package behaviours;
 
 import agents.UserAgent;
+import data.Part;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREInitiator;
 
 public class RepairRequestInitiator extends AchieveREInitiator {
@@ -25,6 +27,16 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         myAgent.println("refuse received from " + refuse.getSender().getLocalName());
+        Part p = null;
+        try { p = (Part)refuse.getContentObject();} catch (UnreadableException e) { throw new RuntimeException(e); }
+        myAgent.println("Partie deffectueuse identifiée : " + p.name());
+        if(refuse.getConversationId().equals("DANGER")) {
+            myAgent.println("Le msg est : \"La réparation de cette pièce est dangereuse, je recommande un achat d'un nouveau produit !\" ");
+        }
+        else {
+            myAgent.println("Le msg est : \"Commandez cette pièce et revenez nous voir !\"");
+        }
+
     }
 
     //function triggered by an INFORM msg, the sender send its result

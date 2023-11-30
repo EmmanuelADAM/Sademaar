@@ -116,6 +116,10 @@ public class Repair {
         this.endDate = endDate;
     }
 
+    public ProductImage getProductImg() {
+        return productImg;
+    }
+
     @Override
     public String toString() {
         return "Repair{" +
