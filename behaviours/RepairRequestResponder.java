@@ -65,8 +65,6 @@ public class RepairRequestResponder extends AchieveREResponder {
     //param : request = initial initial request, response = agreement I just sent
     @Override
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
-        String content = request.getContent();
-
         ACLMessage answer = request.createReply();
         answer.setPerformative(ACLMessage.INFORM);
         answer.setContent("result = ok" );
