@@ -1,15 +1,20 @@
 package behaviours;
 
 import agents.RepairAgent;
+import data.Part;
+import data.Product;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class RepairRequestResponder extends AchieveREResponder {
     RepairAgent myAgent;
+    Part faultyPart;
 
     public RepairRequestResponder(Agent a, MessageTemplate mt) {
         super(a, mt);
@@ -25,16 +30,34 @@ public class RepairRequestResponder extends AchieveREResponder {
         Random hasard = new Random();
         myAgent.println("received  " + request.getContent());
         ACLMessage answer = request.createReply();
-        //parfois l'agent choisi de refuser la demande
-        if (hasard.nextBoolean()) {
-            answer.setPerformative(ACLMessage.AGREE);
-            myAgent.println("I'm ok to answer...");
-            myAgent.println("-".repeat(40));
-        } else {
+        Product product = null;
+        try { product = (Product)request.getContentObject();}
+        catch (UnreadableException e) { throw new RuntimeException(e);}
+
+        // identify the faulty part
+        // sometimes the breakdown doesn't necessitate part, just a small repair
+        // 80% of the time, the breakdown will require a part
+        if (hasard.nextDouble()<0.8){
             answer.setPerformative(ACLMessage.REFUSE);
-            myAgent.println("I refuse the request !");
-            myAgent.println("(o)".repeat(20));
+            faultyPart = product.defineFauyltyPart();
+            try { answer.setContentObject(faultyPart);} catch (IOException e) { throw new RuntimeException(e); }
+            myAgent.println("Partie deffectueuse identifiée : " + faultyPart.name());
+            myAgent.println("-".repeat(40));
+            if(faultyPart.dangerous())
+            {
+                answer.setConversationId("DANGER");
+                myAgent.println("La réparation de cette pièce est dangereuse, je recommande un achat d'un nouveau produit ! ");
+            }
+            else {
+                answer.setConversationId("CMD");
+                myAgent.println("Commandez cette prièce et revenez nous voir !");
+            }
         }
+        else{
+            answer.setPerformative(ACLMessage.AGREE);
+            myAgent.println("On va tenter de réparer cela ensemble...");
+        }
+            myAgent.println("-".repeat(40));
         return answer;
     }
 
