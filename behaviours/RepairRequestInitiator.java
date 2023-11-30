@@ -36,7 +36,7 @@ public class RepairRequestInitiator extends AchieveREInitiator {
         else {
             myAgent.println("Le msg est : \"Commandez cette pièce et revenez nous voir !\"");
         }
-
+    //TODO: poursuivre avec l'achat de la pièce ou du produit....
     }
 
     //function triggered by an INFORM msg, the sender send its result
@@ -44,5 +44,12 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     protected void handleInform(ACLMessage inform) {
         myAgent.println("from " + inform.getSender().getLocalName() +
                 ", I received this result: " + inform.getContent());
+    }
+
+
+    @Override
+    protected void handleFailure(ACLMessage failure) {
+        myAgent.println("from " + failure.getSender().getLocalName() +
+                ", I received this result: " + failure.getContent());
     }
 }

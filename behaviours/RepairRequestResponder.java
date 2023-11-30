@@ -28,11 +28,12 @@ public class RepairRequestResponder extends AchieveREResponder {
     @Override
     protected ACLMessage handleRequest(ACLMessage request) {
         Random hasard = new Random();
-        myAgent.println("received  " + request.getContent());
+        myAgent.println(request.getSender().getLocalName() + " is arrived. ");
         ACLMessage answer = request.createReply();
         Product product = null;
         try { product = (Product)request.getContentObject();}
         catch (UnreadableException e) { throw new RuntimeException(e);}
+        myAgent.println(" with this product : " + product.getName());
 
         // identify the faulty part
         // sometimes the breakdown doesn't necessitate part, just a small repair
@@ -50,7 +51,7 @@ public class RepairRequestResponder extends AchieveREResponder {
             }
             else {
                 answer.setConversationId("CMD");
-                myAgent.println("Commandez cette prièce et revenez nous voir !");
+                myAgent.println("Je recommande un achat de cette prièce et revenez nous voir !");
             }
         }
         else{
@@ -66,9 +67,16 @@ public class RepairRequestResponder extends AchieveREResponder {
     @Override
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
         ACLMessage answer = request.createReply();
-        answer.setPerformative(ACLMessage.INFORM);
-        answer.setContent("result = ok" );
-        myAgent.println("I send: ok");
+        if(Math.random()<0.8) {
+            answer.setPerformative(ACLMessage.INFORM);
+            answer.setContent("Réparation effectuée avec succès" );
+            myAgent.println("Réparation effectuée avec succès");
+        }
+        else {
+            answer.setPerformative(ACLMessage.FAILURE);
+            answer.setContent("Réparation impossible" );
+            myAgent.println("Réparation impossible");
+        }
         myAgent.println("(o)".repeat(20));
         return answer;
     }

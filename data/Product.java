@@ -1,9 +1,7 @@
 package data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**class representing a product
  * - name
@@ -69,10 +67,11 @@ public class Product implements Serializable {
 
     /**choose randomly a part of the product that is identified as faulty*/
     public Part defineFauyltyPart() {
-        //TODO: modifier pour garantir que part soit un tableau non vide
         Random hasard = new Random();
         var parts = spec.getSmallParts();
-        if(hasard.nextBoolean()) parts = spec.getBigParts();
+        if((hasard.nextBoolean() || parts.length == 0) &&
+                (Objects.nonNull(spec.getBigParts()) && spec.getBigParts().length  > 0))
+            parts = spec.getBigParts();
         int nb = hasard.nextInt(parts.length);
         return parts[nb];
     }
