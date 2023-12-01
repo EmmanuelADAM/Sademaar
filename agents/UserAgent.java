@@ -104,7 +104,8 @@ public class UserAgent extends GuiAgent {
         //for the moment, I suppose there is only one type of event, click on go
         switch(currentRepair.getState()){
             case Ask4RdzVs -> ask4RdzVs(pi);
-            case RdzVs ->  ask4Repair();
+            case RepairFailed ->  coffeeShopFailed();
+            case NeedNewProduct ->  ask4NewProduct();
             case Done -> repairDone();
         }
     }
@@ -149,6 +150,22 @@ public class UserAgent extends GuiAgent {
     }
 
     private void repairDone(){
+        println("reparation correctement effectuée ! cela vous a coûté le temps d'un café !!");
+    }
+
+    private void ask4Parts(ProductImage pi) {
+        println("Lancement d'un appel d'offres auprès des distributeurs de pièces");
+        //TODO
+    }
+
+    private void ask4NewProduct() {
+        println("Lancement d'un appel d'offres auprès des distributeurs de produits");
+        //TODO
+    }
+
+    private void coffeeShopFailed() {
+        println("Echec du repair café, lancement d'une recherche de rendez vous aurpès d'autres repair cafés");
+        //TODO
     }
 
     /**add a CFP from user to list of helpers*/
@@ -167,6 +184,15 @@ public class UserAgent extends GuiAgent {
 
         var askReparation = new AskForRdzVsBehaviour(this, msg, pi);
         addBehaviour(askReparation);
+    }
+
+    /**fucnction lauched when the user get ou of the coffe shop*/
+    public void getOuCoffeShop(StateRepair state){
+        switch (state){
+            case Ask4Parts -> ask4Parts(null);
+            case RdzVs -> ask4Repair();
+            case Done -> repairDone();
+        }
     }
 
     public void println(String msg)
