@@ -10,6 +10,7 @@ import jade.proto.AchieveREInitiator;
 
 public class RepairRequestInitiator extends AchieveREInitiator {
     UserAgent myAgent;
+    Part p = null;
 
 
     public RepairRequestInitiator(Agent a, ACLMessage msg) {
@@ -28,7 +29,6 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         myAgent.println("refuse received from " + refuse.getSender().getLocalName());
-        Part p = null;
         try { p = (Part)refuse.getContentObject();} catch (UnreadableException e) { throw new RuntimeException(e); }
         myAgent.println("Partie deffectueuse identifiée : " + p.name());
         if(refuse.getConversationId().equals("DANGER")) {
@@ -57,4 +57,10 @@ public class RepairRequestInitiator extends AchieveREInitiator {
                 ", I received this result: " + failure.getContent());
         myAgent.getOuCoffeShop(StateRepair.RepairFailed);
     }
+
+    @Override
+    public int onEnd() {
+        return p==null ? 0 : 1;
+    }
+
 }
