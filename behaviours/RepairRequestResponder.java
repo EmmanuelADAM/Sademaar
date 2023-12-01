@@ -80,4 +80,5 @@ public class RepairRequestResponder extends AchieveREResponder {
         myAgent.println("(o)".repeat(20));
         return answer;
     }
+
 }
