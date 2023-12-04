@@ -104,9 +104,11 @@ public class UserAgent extends GuiAgent {
         //for the moment, I suppose there is only one type of event, click on go
         switch(currentRepair.getState()){
             case Ask4RdzVs -> ask4RdzVs(pi);
+            case RdzVs -> ask4Repair();
             case RepairFailed ->  coffeeShopFailed();
             case NeedNewProduct ->  ask4NewProduct();
             case Done -> repairDone();
+            default -> println("unknown state : " + currentRepair.getState());
         }
     }
 
