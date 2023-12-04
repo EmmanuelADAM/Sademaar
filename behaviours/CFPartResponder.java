@@ -1,6 +1,8 @@
 package behaviours;
 
 import agents.RepairAgent;
+import agents.SparePartsStoreAgent;
+import data.Part;
 import data.Product;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
@@ -10,32 +12,37 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 
+import java.io.IOException;
+import java.util.Collections;
+
+/**Contract net responder for a CFP msg regarding a part   */
 public class CFPartResponder extends ContractNetResponder {
-    Product product;
-    int userLevel;
-    RepairAgent myAgent;
-    public CFPartResponder(RepairAgent a, MessageTemplate mt) {
+    Part part;
+    SparePartsStoreAgent myAgent;
+    public CFPartResponder(SparePartsStoreAgent a, MessageTemplate mt) {
         super(a, mt);
+        myAgent = a;
     }
     //function triggered by a PROPOSE msg : send back the ranking
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
         myAgent.println("~".repeat(40));
-        int hasard = (int)(Math.random()*8) - 4;
-        Object[]tabContent = null;
-        try {  tabContent = (Object[])cfp.getContentObject();
+        try {  part = (Part)cfp.getContentObject();
         } catch (UnreadableException e) { throw new RuntimeException(e);}
-        product = (Product)tabContent[0];
-        userLevel = (int)tabContent[1];
-        myAgent.println("%s  has a problem with a %s".formatted(cfp.getSender().getLocalName(), product.getSpec()));
-        myAgent.println("its level of expertise with this object is of %d/5".formatted(userLevel));
-
+        myAgent.println("%s ask for this kind of part '%s' ".formatted(cfp.getSender().getLocalName(), part.name()));
         ACLMessage answer = cfp.createReply();
-        if(hasard<=0 )answer.setPerformative(ACLMessage.REFUSE);
-        else answer.setPerformative(ACLMessage.PROPOSE);
 
-//                String choice = makeItsChoice(cfp.getContent());
-        answer.setContent(String.valueOf(hasard));
+        var parts = myAgent.getParts();
+        int index = parts.indexOf(part);
+        if ( index == -1) {
+            myAgent.println("I don't sell this part");
+            answer.setPerformative(ACLMessage.REFUSE);
+            throw new RefuseException(answer);
+        }
+
+        try { answer.setContentObject(parts.get(index).price()); }
+        catch (IOException e) { throw new RuntimeException(e);}
+
         return answer;
     }
 
@@ -47,7 +54,8 @@ public class CFPartResponder extends ContractNetResponder {
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         myAgent.println("=".repeat(15));
-        myAgent.println(" I proposed " + propose.getContent());
+        try { myAgent.println(" I proposed " + propose.getContentObject()); }
+        catch (UnreadableException e) { throw new RuntimeException(e); }
         myAgent.println(cfp.getSender().getLocalName() + " accepted my poposal and sent the result:  " + accept.getContent());
         ACLMessage msg = accept.createReply();
         msg.setPerformative(ACLMessage.INFORM);

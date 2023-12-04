@@ -30,13 +30,14 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     protected void handleRefuse(ACLMessage refuse) {
         myAgent.println("refuse received from " + refuse.getSender().getLocalName());
         try { p = (Part)refuse.getContentObject();} catch (UnreadableException e) { throw new RuntimeException(e); }
-        myAgent.println("Partie deffectueuse identifiée : " + p.name());
+        myAgent.println("Partie défectueuse identifiée : " + p.name());
         if(refuse.getConversationId().equals("DANGER")) {
             myAgent.println("Le msg est : \"La réparation de cette pièce est dangereuse, je recommande un achat d'un nouveau produit !\" ");
             myAgent.getOuCoffeShop(StateRepair.NeedNewProduct);
         }
         else {
             myAgent.println("Le msg est : \"Commandez cette pièce et revenez nous voir !\"");
+            myAgent.getCurrentRepair().getParts().add(p);
             myAgent.getOuCoffeShop(StateRepair.Ask4Parts);
         }
     //TODO: poursuivre avec l'achat de la pièce ou du produit....

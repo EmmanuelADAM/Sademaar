@@ -1,10 +1,16 @@
 package agents;
 
+import behaviours.AskForPartBehaviour;
+import behaviours.CFPartResponder;
+import behaviours.CFRdzVsResponder;
 import data.Part;
 import data.ProductSpec;
+import data.StateRepair;
 import jade.core.AgentServicesTools;
 import jade.gui.AgentWindowed;
 import jade.gui.SimpleWindow4Agent;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -37,6 +43,13 @@ public class SparePartsStoreAgent extends RepairAgent {
         for(var p:parts)
             println("\t%s".formatted(p));
 
+        addBehaviour(new CFPartResponder(this, MessageTemplate.MatchConversationId(StateRepair.Ask4Parts.toString())));
+
+    }
+
+
+    public List<Part> getParts() {
+        return parts;
     }
 
 }

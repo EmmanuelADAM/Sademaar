@@ -11,6 +11,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -20,17 +21,22 @@ import java.util.List;
 import java.util.Map;
 
 
+/**ContractNet Behaviour asking for a part to the SparePartsAgent*/
 public class AskForPartBehaviour extends ContractNetInitiator {
+    /**user agent making the request*/
     UserAgent a;
+    /**part to buy*/
     Part p;
+    /**evaluation of the sellers*/
     Map<AID, Integer> evaluationMap;
-    ProductImage pi;
+
 
     public AskForPartBehaviour(Agent a, ACLMessage cfp, Part p) {
         super(a, cfp);
         this.a = (UserAgent)a;
         this.p = p;
         evaluationMap = this.a.getEvaluationMap();
+        this.reset(cfp);
     }
 
     //function triggered by a PROPOSE msg
@@ -64,11 +70,6 @@ public class AskForPartBehaviour extends ContractNetInitiator {
         var currentDate = LocalDateTime.now();
         //difference between dates in minutes
         Double price = 0d;
-        var patienceHours = a.getPatience() *24;
-        var lastPossibleDate   = currentDate.plusDays(a.getPatience());
-
-
-
         double pref = 0.0;
         double bestPref = Double.MAX_VALUE;
         double prefPrice = 0.0;
@@ -90,9 +91,10 @@ public class AskForPartBehaviour extends ContractNetInitiator {
             acceptances.add(answer);
             try {
                 price = (Double) proposal.getContentObject();
-                //TODO:price selon le prix standard de l'objet
+                //TODO:price selon le prix standard de la part
+                prefPrice = price / p.price();
                 prefEval = Math.max(0, 1. - (double) evaluationMap.get(proposal.getSender()) /UserAgent.MAXRATING);
-                pref =  prefDate*a.getCoefDate() + prefEval*a.getCoefEvaluation();
+                pref =  prefPrice*a.getCoefPrice() + prefEval*a.getCoefEvaluation();
                 if (pref<bestPref){
                     bestPref = pref;
                     bestProposal = proposal;
@@ -102,12 +104,12 @@ public class AskForPartBehaviour extends ContractNetInitiator {
                 throw new RuntimeException(e);
             }
             a.println("%s\t has proposed %s ".formatted(proposal.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
-            if (pref!=Double.MAX_VALUE) a.println("\t prefDate=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefDate, prefEval, pref));
+            if (pref!=Double.MAX_VALUE) a.println("\t prefPrice=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefPrice, prefEval, pref));
         }
         a.println(".".repeat(30));
         if(bestAnswer!=null) {
             bestAnswer.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-            bestAnswer.setContent("I accept the rdz-vs...");
+            bestAnswer.setContent("I accept the proposal...");
             a.println("I choose the proposal of " + bestProposal.getSender().getLocalName());
         } else {
             a.println("I got no proposal !!!! I'll retry later :-( ...... ");
@@ -121,12 +123,11 @@ public class AskForPartBehaviour extends ContractNetInitiator {
     //function triggered by a INFORM msg : a voter accept the result
     // @Override
     protected void handleInform(ACLMessage inform) {
-        a.getWindow().println("the rdz-vs is accepted by " + inform.getSender().getLocalName());
-        LocalDateTime dateRdzVs = null;
-        try { dateRdzVs = (LocalDateTime) inform.getContentObject();}
+        a.getWindow().println("the sell is accepted by " + inform.getSender().getLocalName());
+        Double acceptedPrice = null;
+        try { acceptedPrice = (Double) inform.getContentObject();}
         catch (UnreadableException e) { throw new RuntimeException(e);}
-        RendezVs rdzvs = new RendezVs(dateRdzVs, myAgent.getAID(), inform.getSender(),   pi.getP(), StateRepair.RdzVs);
-        a.addRdzVs(rdzvs);
+        a.addCost(acceptedPrice);
     }
 
 

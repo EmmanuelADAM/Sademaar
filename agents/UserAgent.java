@@ -10,9 +10,9 @@ import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
 import behaviours.AskForRdzVsBehaviour;
+import behaviours.AskForPartBehaviour;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /** an agent that represent a user
@@ -45,6 +45,8 @@ public class UserAgent extends GuiAgent {
 
     /**importance of the date to take a rdz-vs*/
     double coefDate;
+    /**importance of the price to choose a product or a part*/
+    double coefPrice;
     /**importance of the evaluation to take a rdz-vs*/
     double coefEvaluation;
 
@@ -155,9 +157,24 @@ public class UserAgent extends GuiAgent {
         println("reparation correctement effectuée ! cela vous a coûté le temps d'un café !!");
     }
 
-    private void ask4Parts(ProductImage pi) {
+    private void ask4Parts() {
         println("Lancement d'un appel d'offres auprès des distributeurs de pièces");
-        //TODO
+        ACLMessage msg = new ACLMessage(ACLMessage.CFP);
+        msg.setConversationId("id");
+        Part p = currentRepair.getParts().getLast();
+        try { msg.setContentObject(p); }
+        catch (IOException e) { throw new RuntimeException(e);}
+
+        var helpers = AgentServicesTools.searchAgents(this, "repair", "SparePartsStore");
+        msg.addReceivers(helpers);
+        println("-".repeat(40));
+
+        msg.setConversationId(StateRepair.Ask4Parts.toString());
+        msg.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+        msg.setReplyByDate(new Date(System.currentTimeMillis() + 1000));
+
+        var askPart = new AskForPartBehaviour(this, msg, p);
+        addBehaviour(askPart);
     }
 
     private void ask4NewProduct() {
@@ -191,11 +208,13 @@ public class UserAgent extends GuiAgent {
     /**fucnction lauched when the user get ou of the coffe shop*/
     public void getOuCoffeShop(StateRepair state){
         switch (state){
-            case Ask4Parts -> ask4Parts(null);
+            case Ask4Parts -> ask4Parts();
             case RdzVs -> ask4Repair();
             case Done -> repairDone();
         }
     }
+
+    public void addCost(double cost){currentRepair.addCost(cost);}
 
     public void println(String msg)
     {
@@ -238,6 +257,8 @@ public class UserAgent extends GuiAgent {
     public double getCoefEvaluation() {
         return coefEvaluation;
     }
+
+    public double getCoefPrice() { return coefPrice; }
 
     public void setCoefEvaluation(double coefEvaluation) {
         this.coefEvaluation = coefEvaluation;

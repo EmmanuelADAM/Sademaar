@@ -30,6 +30,8 @@ public class Repair {
     LocalDateTime startDate;
     /**date when the repair ends (with success or not)*/
     LocalDateTime endDate;
+    /**cost of the repair*/
+    Double cost;
 
     public Repair(AID owner, ProductImage productImg) {
         this.owner = owner;
@@ -120,12 +122,25 @@ public class Repair {
         return productImg;
     }
 
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
+    }
+
+    public void addCost(Double cost) {
+        this.cost += cost;
+    }
+
     @Override
     public String toString() {
         return "Repair{" +
                 "productImg=" + productImg.p.name +
                 ", end=" + end +
                 ", startDate=" + startDate +
+                ", cost=" + cost +
                 '}';
     }
 }
