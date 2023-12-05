@@ -118,4 +118,13 @@ public class ProductSpec implements Serializable {
         return type;
     }
 
+    public static void main(String[] args) {
+        var tab = Product.getListProducts();
+        for(var p:tab)  System.out.println(p);
+        System.out.println("-".repeat(20));
+        System.out.println("- Les parties existantes - ");
+        for(var p: ProductSpec.listSmallParts)  System.out.println(p);
+        for(var p: ProductSpec.listBigParts)  System.out.println(p);
+        System.out.println("-".repeat(20));
+    }
 }

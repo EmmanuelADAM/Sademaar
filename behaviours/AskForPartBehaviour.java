@@ -2,8 +2,7 @@ package behaviours;
 
 import agents.UserAgent;
 import data.Part;
-import data.ProductImage;
-import data.RendezVs;
+import data.ProductSpec;
 import data.StateRepair;
 import jade.core.AID;
 import jade.core.Agent;
@@ -12,10 +11,6 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,13 +62,18 @@ public class AskForPartBehaviour extends ContractNetInitiator {
     protected void handleAllResponses(List<ACLMessage> responses, List<ACLMessage> acceptances) {
         ArrayList<ACLMessage> listeProposals = new ArrayList<>(responses);
         ACLMessage bestProposal = null;
-        var currentDate = LocalDateTime.now();
         //difference between dates in minutes
         Double price = 0d;
         double pref = 0.0;
         double bestPref = Double.MAX_VALUE;
         double prefPrice = 0.0;
         double prefEval = 0.0;
+        double maxPrice = 0.0;
+        List<Part> list = null;
+        if(p.serialNumber()%1000==0)  list = ProductSpec.getListBigParts();
+        else list = ProductSpec.getListSmallParts();
+        int index = list.indexOf(p);
+        maxPrice = list.get(index).price();
         //we keep only the proposals only
         listeProposals.removeIf(v -> v.getPerformative() != ACLMessage.PROPOSE);
         acceptances.clear();
@@ -82,7 +82,6 @@ public class AskForPartBehaviour extends ContractNetInitiator {
 
         ACLMessage bestAnswer =null;
 
-        LocalDateTime creneau = null;
         for (ACLMessage proposal : listeProposals) {
             //by default, we build a accept answer for each proposal
             var answer = proposal.createReply();
@@ -91,8 +90,7 @@ public class AskForPartBehaviour extends ContractNetInitiator {
             acceptances.add(answer);
             try {
                 price = (Double) proposal.getContentObject();
-                //TODO:price selon le prix standard de la part
-                prefPrice = price / p.price();
+                prefPrice = price / maxPrice;
                 prefEval = Math.max(0, 1. - (double) evaluationMap.get(proposal.getSender()) /UserAgent.MAXRATING);
                 pref =  prefPrice*a.getCoefPrice() + prefEval*a.getCoefEvaluation();
                 if (pref<bestPref){
@@ -103,7 +101,7 @@ public class AskForPartBehaviour extends ContractNetInitiator {
             } catch (UnreadableException e) {
                 throw new RuntimeException(e);
             }
-            a.println("%s\t has proposed %s ".formatted(proposal.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
+            a.println("%s\t has proposed %.2f ".formatted(proposal.getSender().getLocalName(), price));
             if (pref!=Double.MAX_VALUE) a.println("\t prefPrice=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefPrice, prefEval, pref));
         }
         a.println(".".repeat(30));
@@ -124,10 +122,13 @@ public class AskForPartBehaviour extends ContractNetInitiator {
     // @Override
     protected void handleInform(ACLMessage inform) {
         a.getWindow().println("the sell is accepted by " + inform.getSender().getLocalName());
-        Double acceptedPrice = null;
-        try { acceptedPrice = (Double) inform.getContentObject();}
-        catch (UnreadableException e) { throw new RuntimeException(e);}
-        a.addCost(acceptedPrice);
+        Object content = null;
+        try { content = inform.getContentObject();}
+        catch (UnreadableException e) { a.println("the content is not an object : " + content);throw new RuntimeException(e);}
+        Part acceptedPart = null;
+        if (content instanceof Part) acceptedPart = (Part) content;
+        else a.println("the content is not a part : " + acceptedPart);
+        a.setBuyedPart(acceptedPart);
     }
 
 

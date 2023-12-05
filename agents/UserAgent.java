@@ -53,6 +53,9 @@ public class UserAgent extends GuiAgent {
     /**max days of patience for a rdz-vs*/
     int patience;
 
+    /**simple object to provide random number, choice, ....*/
+    Random hasard;
+
     /**gui used by the user agent*/
     UserGui window;
     /**setup of the user agent
@@ -62,7 +65,7 @@ public class UserAgent extends GuiAgent {
     @Override
     public void setup() {
         //rchoose randomly some products among the existent
-        Random hasard = new Random();
+        hasard = new Random();
         //add some products choosen randomly in the list Product.getListProducts()
         products = new ArrayList<>();
         int nbTypeOfProducts = ProductType.values().length;
@@ -94,6 +97,15 @@ public class UserAgent extends GuiAgent {
     /**on event from the gui :
      * - ask for a rendez-vous*/
     public void onGuiEvent(GuiEvent evt) {
+        println("XXXXXXXXXXXXXXXXXXXXXXXX gui event : " + evt);
+        switch (evt.getType()) {
+            case UserGui.OK_EVENT -> followStepRepair();
+            case UserGui.RESET_EVENT -> resetRepair();
+            default -> println("unknown event : " + evt);
+        }
+    }
+
+    private void followStepRepair() {
         ProductImage pi = null;
         if(currentRepair==null) {
             pi = window.getProduct();
@@ -102,10 +114,12 @@ public class UserAgent extends GuiAgent {
             window.addRepair(currentRepair);
             println("I want to repair this : " + pi);
         }
+        println("gui event, current repair : " + currentRepair);
 
         //for the moment, I suppose there is only one type of event, click on go
         switch(currentRepair.getState()){
             case Ask4RdzVs -> ask4RdzVs(pi);
+            case Ask4Parts -> ask4Parts();
             case RdzVs -> ask4Repair();
             case RepairFailed ->  coffeeShopFailed();
             case NeedNewProduct ->  ask4NewProduct();
@@ -114,9 +128,14 @@ public class UserAgent extends GuiAgent {
         }
     }
 
+    private void resetRepair() {
+        println("-".repeat(30));
+        println("reset repair");
+        currentRepair = null;
+    }
+
     private void ask4RdzVs(ProductImage pi) {
         //- search about repair coffees
-        Random hasard = new Random();
         helpers.clear();
         var tabAIDs = AgentServicesTools.searchAgents(this, "repair", "coffee");
         helpers.addAll(Arrays.stream(tabAIDs).toList());
@@ -161,11 +180,15 @@ public class UserAgent extends GuiAgent {
         println("Lancement d'un appel d'offres auprès des distributeurs de pièces");
         ACLMessage msg = new ACLMessage(ACLMessage.CFP);
         msg.setConversationId("id");
-        Part p = currentRepair.getParts().getLast();
+        Part p = getPartToBuy();
         try { msg.setContentObject(p); }
         catch (IOException e) { throw new RuntimeException(e);}
 
         var helpers = AgentServicesTools.searchAgents(this, "repair", "SparePartsStore");
+        //add the helpers to the map if they are not already there (the give a random level of confidence)
+        for(AID helper : helpers)
+            evaluationMap.computeIfAbsent(helper, k -> hasard.nextInt(MAXRATING)+1);
+
         msg.addReceivers(helpers);
         println("-".repeat(40));
 
@@ -207,9 +230,8 @@ public class UserAgent extends GuiAgent {
 
     /**fucnction lauched when the user get ou of the coffe shop*/
     public void getOuCoffeShop(StateRepair state){
+        currentRepair.setState(state);
         switch (state){
-            case Ask4Parts -> ask4Parts();
-            case RdzVs -> ask4Repair();
             case Done -> repairDone();
         }
     }
@@ -275,5 +297,20 @@ public class UserAgent extends GuiAgent {
 
     public void setCurrentRepair(Repair currentRepair) {
         this.currentRepair = currentRepair;
+    }
+
+    public void addPartToBuy(Part p){
+        currentRepair.getParts().add(new Part(p, 0.0));
+    }
+
+    public Part getPartToBuy(){
+        var parts = currentRepair.getParts();
+        var f = parts.stream().filter(p->p.price()==0);
+        return f.toList().getFirst();
+    }
+
+    public void setBuyedPart(Part p){
+        currentRepair.getParts().remove(p);
+        currentRepair.getParts().add(p);
     }
 }

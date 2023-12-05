@@ -9,12 +9,10 @@ import jade.gui.GuiEvent;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.time.LocalDateTime;
 
 public class UserGui {
-    public static int OK_EVENT = 1;
+    final public static int OK_EVENT = 1;
+    final public static int RESET_EVENT = 0;
     private JPanel jpMain;
     private JTextArea zoneTexte;
     private JButton jbOk;
@@ -27,10 +25,12 @@ public class UserGui {
     private JLabel jlRdzVs;
     private JComboBox<Repair> comboRepairs;
     private JComboBox<RendezVs> comboRepairRdzVs;
+    private JButton bReset;
 
     private UserAgent agent;
     UserGui(){
         jbOk.addActionListener(e -> agent.postGuiEvent(new GuiEvent(e,OK_EVENT)));
+        bReset.addActionListener(e -> agent.postGuiEvent(new GuiEvent(e,RESET_EVENT)));
     }
     public UserGui(UserAgent agent){
         this.agent = agent;
@@ -44,6 +44,7 @@ public class UserGui {
         frame.pack();
         frame.setVisible(true);
         userGui.jbOk.addActionListener(e -> agent.postGuiEvent(new GuiEvent(e,OK_EVENT)));
+        userGui.bReset.addActionListener(e -> agent.postGuiEvent(new GuiEvent(e,RESET_EVENT)));
         var produits =  agent.getProducts();
         produits.forEach(userGui.comboChoixProduit::addItem);
         userGui.comboRepairs.addItemListener(e -> {

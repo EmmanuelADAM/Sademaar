@@ -39,7 +39,7 @@ public class CFPartResponder extends ContractNetResponder {
             answer.setPerformative(ACLMessage.REFUSE);
             throw new RefuseException(answer);
         }
-
+        answer.setPerformative(ACLMessage.PROPOSE);
         try { answer.setContentObject(parts.get(index).price()); }
         catch (IOException e) { throw new RuntimeException(e);}
 
@@ -53,13 +53,14 @@ public class CFPartResponder extends ContractNetResponder {
     //@param accept : the acceptation sent by the auctioneer
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        myAgent.println("=".repeat(15));
-        try { myAgent.println(" I proposed " + propose.getContentObject()); }
-        catch (UnreadableException e) { throw new RuntimeException(e); }
-        myAgent.println(cfp.getSender().getLocalName() + " accepted my poposal and sent the result:  " + accept.getContent());
         ACLMessage msg = accept.createReply();
+        myAgent.println("=".repeat(15));
+        try {
+            myAgent.println(" I proposed " + propose.getContentObject());
+            msg.setContentObject(part); }
+        catch (UnreadableException|IOException e) { throw new RuntimeException(e); }
+        myAgent.println(cfp.getSender().getLocalName() + " accepted my proposal and sent the result:  " + accept.getContent());
         msg.setPerformative(ACLMessage.INFORM);
-        msg.setContent("ok !");
         return msg;
     }
 

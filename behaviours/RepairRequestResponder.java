@@ -10,6 +10,7 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
 public class RepairRequestResponder extends AchieveREResponder {
@@ -31,8 +32,12 @@ public class RepairRequestResponder extends AchieveREResponder {
         myAgent.println(request.getSender().getLocalName() + " is arrived. ");
         ACLMessage answer = request.createReply();
         Product product = null;
-        try { product = (Product)request.getContentObject();}
-        catch (UnreadableException e) { throw new RuntimeException(e);}
+        Object o = null;
+        try { o = request.getContentObject();}
+        catch (UnreadableException e) { myAgent.println("UnreadableException : contentObject = " + o ); throw new RuntimeException(e);}
+        try { product = (Product) o; }
+        catch (ClassCastException e) { myAgent.println("ClassCastException : contentObject = " + o ); throw new RuntimeException(e);}
+
         myAgent.println(" with this product : " + product.getName());
 
         // identify the faulty part
@@ -51,7 +56,7 @@ public class RepairRequestResponder extends AchieveREResponder {
             }
             else {
                 answer.setConversationId("CMD");
-                myAgent.println("Je recommande un achat de cette prièce et revenez nous voir !");
+                myAgent.println("Je recommande un achat de cette pièce et revenez nous voir !");
             }
         }
         else{

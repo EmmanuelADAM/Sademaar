@@ -141,6 +141,8 @@ public class Repair {
                 ", end=" + end +
                 ", startDate=" + startDate +
                 ", cost=" + cost +
+                ", state=" + state +
+                ", parts=" + parts +
                 '}';
     }
 }

@@ -37,7 +37,7 @@ public class RepairRequestInitiator extends AchieveREInitiator {
         }
         else {
             myAgent.println("Le msg est : \"Commandez cette pièce et revenez nous voir !\"");
-            myAgent.getCurrentRepair().getParts().add(p);
+            myAgent.addPartToBuy(p);
             myAgent.getOuCoffeShop(StateRepair.Ask4Parts);
         }
     //TODO: poursuivre avec l'achat de la pièce ou du produit....
