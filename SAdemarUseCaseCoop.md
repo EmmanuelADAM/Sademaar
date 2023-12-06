@@ -12,7 +12,7 @@ Case study for ISSIA'23.
 ## Circular economy
 
 
-<!--
+<div hidden>
 ```
 @startuml GlobalUseCase
 '!pragma layout smetana
@@ -122,7 +122,8 @@ us-->commanderProduit
 '====================================================
 
 @enduml```
--->
+</div>
+
 
 
 =======

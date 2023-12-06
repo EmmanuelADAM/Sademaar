@@ -11,7 +11,7 @@ Case study for ISSIA'23.
 ----
 ## Circular economy
 
-<!--
+<div hidden>
 ```
 @startuml declarationPanne
 
@@ -34,9 +34,9 @@ user1 <- user1: choix rdz-vs
 user1 -> site: acceptation\n rdz-vs rc3
 site -> rc3: acceptation rdz-vs
 @enduml```
--->
+</div>
 
-<!--
+<div hidden>
 ```
 @startuml reparationPanne
 skinparam responseMessageBelowArrow true
@@ -118,10 +118,9 @@ else #FFEAEA interet limité dans la réparation: remplacement
 end
 
 @enduml```
+</div>
 
--->
-
-<!--
+<div hidden>
 ```
 @startuml ReparationImpossible
 
@@ -152,5 +151,5 @@ participant "Distributeur\n2nde main 1" as ds1 #lightcyan
 
 @enduml```
 
--->
+</div>
 
