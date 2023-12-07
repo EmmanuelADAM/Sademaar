@@ -45,7 +45,7 @@ public class RepairRequestResponder extends AchieveREResponder {
         // 80% of the time, the breakdown will require a part
         if (hasard.nextDouble()<0.8){
             answer.setPerformative(ACLMessage.REFUSE);
-            faultyPart = product.defineFauyltyPart();
+            faultyPart = product.getFaultyPart();
             try { answer.setContentObject(faultyPart);} catch (IOException e) { throw new RuntimeException(e); }
             myAgent.println("Partie deffectueuse identifiée : " + faultyPart.name());
             myAgent.println("-".repeat(40));
