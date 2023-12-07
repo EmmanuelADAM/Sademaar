@@ -15,24 +15,27 @@ Case study for ISSIA'23.
 ```
 @startuml declarationPanne
 
-participant user1 
+participant utililsateur1 as user1
 participant "Site\nSademaar" as site #coral 
 participant "Repair\n Café 1" as rc1 #tan 
-participant "Repair\n Café 2" as rc2 #tan 
-participant "Repair\n Café 3" as rc3 #tan 
+participant "Repair\n Café 2" as rc2 #tan
+participant "Repair\n Café 3" as rc3 #tan
+participant "Repair\n Café 4" as rc4 #tan
 
 ==DECLARE PANNE==
-user1 -> site: description \ndu produit en panne
+user1 -> site: description \ndu produit en panne\n (Aspirateur)
 site <- site:choix\nrepair cafés adaptés
-site -> rc1: msg1
-' site -> rc2: msg1
-site -> rc3: msg1
-rc1 --> user1: rdz-vs (creneau)
-' rc2 --> user1: refus (ne gère pas ce type de produit)
-rc3 --> user1: rdz-vs (creneau)
+site -> rc1: dmd-rdz-vs-produit\n(Aspirateur)
+site -> rc2: 
+site -> rc3: 
+site -> rc4: 
+rc1 --> user1: creneau (date, heure)
+rc2 --> user1: refus (ne gère pas ce type de produit)
+rc3 --> user1: creneau (date, heure)
+rc4 --> user1: refus (pas de créneau disponible dans une en temps raisonable)
 user1 <- user1: choix rdz-vs
-user1 -> site: acceptation\n rdz-vs rc3
-site -> rc3: acceptation rdz-vs
+user1 ->  rc3: acceptation rdz-vs
+rc3 ->  user1: confirmation
 @enduml```
 </div>
 
@@ -45,9 +48,9 @@ participant "Site\nSademaar" as site #coral
 participant "Repair\n Café 1" as rc1 #tan 
 participant "Repair\n Café 2" as rc2 #tan 
 participant "Repair\n Café 3" as rc3 #tan 
-participant "Pièces\n détâchées 1" as pd1 #green 
-participant "Pièces\n détâchées 2" as pd2 #green 
-participant "Pièces\n détâchées\n2nde main 1" as pds1 #lightgreen 
+participant "Pièces\n détachées 1" as pd1 #green 
+participant "Pièces\n détachées 2" as pd2 #green 
+participant "Pièces\n détachées\n2nde main 1" as pds1 #lightgreen 
 participant "Distributeur 1" as d1 #cyan 
 participant "Distributeur 2" as d2 #cyan 
 participant "Distributeur\n2nde main 1" as ds1 #lightcyan 

@@ -10,7 +10,9 @@ Case study for ISSIA'23.
 
 ----
 ## Circular economy
-
+@startuml
+testdot
+@enduml
 
 <div hidden>
 ```

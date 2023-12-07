@@ -225,7 +225,7 @@ end
 ```
 @startuml ReparationImpossible
 
-participant user1 
+participant user1 SAdemarActivityDiagCoop
 participant "Site\nSademaar" as site #coral 
 participant "Repair\n Café 1" as rc1 #tan 
 participant "Repair\n Café 2" as rc2 #tan 
