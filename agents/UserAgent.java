@@ -50,9 +50,6 @@ public class UserAgent extends GuiAgent {
     /**importance of the evaluation to take a rdz-vs*/
     double coefEvaluation;
 
-    /**max days of patience for a rdz-vs*/
-    int patience;
-
     /**simple object to provide random number, choice, ....*/
     Random hasard;
 
@@ -83,7 +80,6 @@ public class UserAgent extends GuiAgent {
         repairs = new ArrayList<>();
         coefDate = ((int)(hasard.nextDouble()*10)+1)/10.0;
         coefEvaluation = ((int)(hasard.nextDouble()*10)+1)/10.0;
-        patience = hasard.nextInt(3,21);
         // create the window
         this.window = UserGui.createUserGui(getLocalName(), this);//SimpleWindow4Agent(getLocalName(), this);
         println("Hello!");
@@ -97,7 +93,6 @@ public class UserAgent extends GuiAgent {
     /**on event from the gui :
      * - ask for a rendez-vous*/
     public void onGuiEvent(GuiEvent evt) {
-        println("XXXXXXXXXXXXXXXXXXXXXXXX gui event : " + evt);
         switch (evt.getType()) {
             case UserGui.OK_EVENT -> followStepRepair();
             case UserGui.RESET_EVENT -> resetRepair();
@@ -109,12 +104,13 @@ public class UserAgent extends GuiAgent {
         ProductImage pi = null;
         if(currentRepair==null) {
             pi = window.getProduct();
+            pi.getP().getFaultyPart();
             currentRepair = new Repair(getAID(), pi);
             repairs.add(currentRepair);
             window.addRepair(currentRepair);
-            println("I want to repair this : " + pi);
+            println("I want to repair this : " + pi.getP().getName());
         }
-        println("gui event, current repair : " + currentRepair);
+        println("current repair : " + currentRepair);
 
         //for the moment, I suppose there is only one type of event, click on go
         switch(currentRepair.getState()){
@@ -124,6 +120,7 @@ public class UserAgent extends GuiAgent {
             case RepairFailed ->  coffeeShopFailed();
             case NeedNewProduct ->  ask4NewProduct();
             case Done -> repairDone();
+            case NoPart -> println("the last repair fail with no part found... you should ask for a new product, sorry.....");
             default -> println("unknown state : " + currentRepair.getState());
         }
     }
@@ -147,6 +144,11 @@ public class UserAgent extends GuiAgent {
 
         int level = window.getLevel();
         println("My skill to repair this product is of : " + window.getLevel());
+        currentRepair.setUserLevel(level);
+
+        int patience = window.getPatience();
+        println("My patience to repair this product is of %d days ".formatted(patience));
+        currentRepair.setUserPatience(patience);
 
         println("-".repeat(30));
         var helpersLocalNames = helpers.stream().map(AID::getLocalName).toList();
@@ -168,7 +170,7 @@ public class UserAgent extends GuiAgent {
         msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
         Product p = currentRepair.getProductImg().getP();
         try { msg.setContentObject(p);} catch (IOException e) { throw new RuntimeException(e); }
-        msg.addReceiver(currentRepair.getListRendezVs().getLast().repairAgent());
+        msg.addReceiver(currentRepair.getListRepairStates().getLast().getRepairAgent());
         addBehaviour(new RepairRequestInitiator(this, msg));
     }
 
@@ -256,13 +258,6 @@ public class UserAgent extends GuiAgent {
     private void breakdown(){
     }
 
-    public int getPatience() {
-        return patience;
-    }
-
-    public void setPatience(int patience) {
-        this.patience = patience;
-    }
 
     public Map<AID, Integer> getEvaluationMap() {
         return evaluationMap;
@@ -286,9 +281,20 @@ public class UserAgent extends GuiAgent {
         this.coefEvaluation = coefEvaluation;
     }
 
-    public void addRdzVs(RendezVs rdzVs){
-        currentRepair.addRendezVs(rdzVs);
-        window.addRepairRdzVs(rdzVs);
+
+
+    public void addRepairState(RepairState repairState) {
+        if(repairState.getState() == StateRepair.NoRdzVs){
+            var currentRepairState = currentRepair.getListRepairStates().getLast();
+            currentRepairState.setNextState(StateRepair.NoRdzVs);
+            currentRepair.setState(StateRepair.NoRdzVs);
+        }
+        else{
+            var currentRepairState = currentRepair.getListRepairStates().getLast();
+            currentRepairState.setNextState(repairState.getState());
+            currentRepair.addRepairState(repairState);
+            window.addRepairRdzVs(repairState);
+        }
     }
 
     public Repair getCurrentRepair() {

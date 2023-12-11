@@ -74,7 +74,8 @@ public class AskForPartBehaviour extends ContractNetInitiator {
         else list = ProductSpec.getListSmallParts();
         int index = list.indexOf(p);
         maxPrice = list.get(index).price();
-        //we keep only the proposals only
+//TODO: some times its bugs with big parts (???) (ex LaveVaisselle-Bp1)
+// we keep only the proposals only
         listeProposals.removeIf(v -> v.getPerformative() != ACLMessage.PROPOSE);
         acceptances.clear();
         a.println("-".repeat(30));

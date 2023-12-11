@@ -2,13 +2,11 @@ package gui;
 
 import agents.UserAgent;
 import data.ProductImage;
-import data.RendezVs;
+import data.RepairState;
 import data.Repair;
 import jade.gui.GuiEvent;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class UserGui {
     final public static int OK_EVENT = 1;
@@ -24,8 +22,10 @@ public class UserGui {
     private JComboBox<ProductImage> comboChoixProduit;
     private JLabel jlRdzVs;
     private JComboBox<Repair> comboRepairs;
-    private JComboBox<RendezVs> comboRepairRdzVs;
+    private JComboBox<RepairState> comboRepairRdzVs;
     private JButton bReset;
+    private JLabel jlpatience;
+    private JSlider sliderPatience;
 
     private UserAgent agent;
     UserGui(){
@@ -50,7 +50,7 @@ public class UserGui {
         userGui.comboRepairs.addItemListener(e -> {
             userGui.comboRepairRdzVs.removeAllItems();
             Repair repair = (Repair)userGui.comboRepairs.getSelectedItem();
-            repair.getListRendezVs().forEach(userGui.comboRepairRdzVs::addItem);
+            repair.getListRepairStates().forEach(userGui.comboRepairRdzVs::addItem);
         });
 
         return userGui;
@@ -77,10 +77,14 @@ public class UserGui {
     }
 
 
+    public int getPatience(){
+        return sliderPatience.getValue();
+    }
+
     public void addRepair(Repair repair) {
         comboRepairs.addItem(repair);
     }
-    public void addRepairRdzVs(RendezVs rdzVs) {
+    public void addRepairRdzVs(RepairState rdzVs) {
         comboRepairRdzVs.addItem(rdzVs);
     }
 }

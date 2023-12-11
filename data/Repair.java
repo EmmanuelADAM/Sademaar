@@ -1,7 +1,6 @@
 package data;
 
 import agents.RepairAgent;
-import agents.UserAgent;
 import jade.core.AID;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,7 @@ public class Repair {
     /**current state of the repair*/
     StateRepair state;
     /**chronology of the repairs (a list of rendez-vous)*/
-    List<RendezVs> listRendezVs;
+    List<RepairState> listRepairStates;
     /**act of repairing ended or not*/
     boolean end;
     /**global evaluation of the repair*/
@@ -31,7 +30,12 @@ public class Repair {
     /**date when the repair ends (with success or not)*/
     LocalDateTime endDate;
     /**cost of the repair*/
-    Double cost;
+    double cost;
+    /**user level of expertise*/
+    double userLevel;
+    /**user patience*/
+    int userPatience;
+
 
     public Repair(AID owner, ProductImage productImg) {
         this.owner = owner;
@@ -42,16 +46,16 @@ public class Repair {
         this.evaluation = 0;
         this.end = false;
         this.startDate = LocalDateTime.now();
-        this.listRendezVs = new ArrayList<>();
+        this.listRepairStates = new ArrayList<>();
         addFirstRdzVs();
     }
 
     private void addFirstRdzVs() {
-        listRendezVs.add(new RendezVs(startDate, owner, null, productImg.getP(), state));
+        listRepairStates.add(new RepairState(startDate, owner, null, productImg.getP(), state));
     }
-    public void addRendezVs(RendezVs rendezVs) {
-        listRendezVs.add(rendezVs);
-        state = rendezVs.state();
+    public void addRepairState(RepairState repairState) {
+        listRepairStates.add(repairState);
+        state = repairState.getState();
     }
 
     public List<Part> getParts() {
@@ -78,12 +82,12 @@ public class Repair {
         this.state = state;
     }
 
-    public List<RendezVs> getListRendezVs() {
-        return listRendezVs;
+    public List<RepairState> getListRepairStates() {
+        return listRepairStates;
     }
 
-    public void setListRendezVs(List<RendezVs> listRendezVs) {
-        this.listRendezVs = listRendezVs;
+    public void setListRepairStates(List<RepairState> listRepairStates) {
+        this.listRepairStates = listRepairStates;
     }
 
     public boolean isEnd() {
@@ -134,6 +138,24 @@ public class Repair {
         this.cost += cost;
     }
 
+    public double getUserLevel() {
+        return userLevel;
+    }
+    public int getUserPatience() {
+        return userPatience;
+    }
+
+    public void setUserLevel(double userLevel) {
+        this.userLevel = userLevel;
+    }
+
+    public void setUserPatience(int userPatience) {
+        this.userPatience = userPatience;
+    }
+
+
+
+
     @Override
     public String toString() {
         return "Repair{" +
@@ -143,6 +165,8 @@ public class Repair {
                 ", cost=" + cost +
                 ", state=" + state +
                 ", parts=" + parts +
+                ", userLevel=" + userLevel +
+                ", userPatience=" + userPatience +
                 '}';
     }
 }

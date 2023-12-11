@@ -1,8 +1,7 @@
 package behaviours;
 
-import data.Product;
 import data.ProductImage;
-import data.RendezVs;
+import data.RepairState;
 import data.StateRepair;
 import jade.core.AID;
 import jade.core.Agent;
@@ -11,10 +10,8 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import agents.UserAgent;
 
-import javax.swing.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -69,10 +66,9 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
         var currentDate = LocalDateTime.now();
         //difference between dates in minutes
         Duration dateGap = null;
-        var patienceHours = a.getPatience() *24;
-        var lastPossibleDate   = currentDate.plusDays(a.getPatience());
-
-
+        var currentRepair = a.getCurrentRepair();
+        var patienceHours = currentRepair.getUserPatience() *24;
+        var lastPossibleDate   = currentDate.plusDays(currentRepair.getUserPatience());
 
         double pref = 0.0;
         double bestPref = Double.MAX_VALUE;
@@ -121,7 +117,8 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
             a.println("I choose the proposal of " + bestProposal.getSender().getLocalName());
         } else {
             a.println("I got no proposal !!!! I'll retry later :-( ...... ");
-            a.setCurrentRepair(null);
+            RepairState repairState = new RepairState(null, myAgent.getAID(), null,   pi.getP(), StateRepair.NoRdzVs);
+            a.addRepairState(repairState);
         }
         a.getWindow().println("-".repeat(40));
     }
@@ -135,8 +132,8 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
         LocalDateTime dateRdzVs = null;
         try { dateRdzVs = (LocalDateTime) inform.getContentObject();}
         catch (UnreadableException e) { throw new RuntimeException(e);}
-        RendezVs rdzvs = new RendezVs(dateRdzVs, myAgent.getAID(), inform.getSender(),   pi.getP(), StateRepair.RdzVs);
-        a.addRdzVs(rdzvs);
+        RepairState repairState = new RepairState(dateRdzVs, myAgent.getAID(), inform.getSender(),   pi.getP(), StateRepair.RdzVs);
+        a.addRepairState(repairState);
     }
 
 
