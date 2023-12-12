@@ -129,7 +129,7 @@ public class AskForPartBehaviour extends ContractNetInitiator {
         Part acceptedPart = null;
         if (content instanceof Part) acceptedPart = (Part) content;
         else a.println("the content is not a part : " + acceptedPart);
-        a.setBuyedPart(acceptedPart);
+        a.setBuyedPart(inform.getSender(), acceptedPart);
     }
 
 

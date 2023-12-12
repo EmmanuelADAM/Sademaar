@@ -18,7 +18,7 @@ public class RepairRequestInitiator extends AchieveREInitiator {
         myAgent = (UserAgent) a;
     }
 
-    //function triggered by a AGREE msg : the sender accept the resquest and will send an INFORM message with
+    //function triggered by a AGREE msg : the sender accept the request and will send an INFORM message with
     // its result
     @Override
     protected void handleAgree(ACLMessage agree) {

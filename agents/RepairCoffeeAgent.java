@@ -7,6 +7,7 @@ import data.StateRepair;
 import jade.core.AID;
 import jade.core.AgentServicesTools;
 import jade.gui.SimpleWindow4Agent;
+import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import java.awt.Color;
@@ -53,7 +54,7 @@ public class RepairCoffeeAgent extends RepairAgent {
             return v;
         });
 
-        MessageTemplate mt = MessageTemplate.MatchSender(aid);
+        MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchSender(aid), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
         addBehaviour(new RepairRequestResponder(this, mt));
     }
 

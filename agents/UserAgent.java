@@ -110,6 +110,7 @@ public class UserAgent extends GuiAgent {
             window.addRepair(currentRepair);
             println("I want to repair this : " + pi.getP().getName());
         }
+        else pi = currentRepair.getProductImg();
         println("current repair : " + currentRepair);
 
         //for the moment, I suppose there is only one type of event, click on go
@@ -119,6 +120,7 @@ public class UserAgent extends GuiAgent {
             case RdzVs -> ask4Repair();
             case RepairFailed ->  coffeeShopFailed();
             case NeedNewProduct ->  ask4NewProduct();
+            case PartReceived ->  ask4RdzVs(pi);
             case Done -> repairDone();
             case NoPart -> println("the last repair fail with no part found... you should ask for a new product, sorry.....");
             default -> println("unknown state : " + currentRepair.getState());
@@ -156,7 +158,7 @@ public class UserAgent extends GuiAgent {
 
         println("-".repeat(30));
         println("to make my choice, my preference about the date is of " + coefDate);
-        println("my preference about the evaluation of the repair cofee is of " + coefEvaluation);
+        println("my preference about the evaluation of the repair coffee is of " + coefEvaluation);
         println("and patience is of " + patience + " days max");
 
         println("-".repeat(30));
@@ -169,8 +171,9 @@ public class UserAgent extends GuiAgent {
         msg.setConversationId(StateRepair.Ask4Repair.toString());
         msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
         Product p = currentRepair.getProductImg().getP();
-        try { msg.setContentObject(p);} catch (IOException e) { throw new RuntimeException(e); }
-        msg.addReceiver(currentRepair.getListRepairStates().getLast().getRepairAgent());
+        Object[] o = new Object[]{p, currentRepair.getParts()};
+        try { msg.setContentObject(o); } catch (IOException e) { throw new RuntimeException(e); }
+        msg.addReceivers(currentRepair.getListRepairStates().getLast().getRepairAgent());
         addBehaviour(new RepairRequestInitiator(this, msg));
     }
 
@@ -315,8 +318,11 @@ public class UserAgent extends GuiAgent {
         return f.toList().getFirst();
     }
 
-    public void setBuyedPart(Part p){
+    public void setBuyedPart(AID seller, Part p){
         currentRepair.getParts().remove(p);
         currentRepair.getParts().add(p);
+        var currentRepairState = currentRepair.getListRepairStates().getLast();
+        currentRepairState.setNextState(StateRepair.PartReceived);
+        currentRepair.setState(StateRepair.PartReceived);
     }
 }

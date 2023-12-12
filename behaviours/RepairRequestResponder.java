@@ -10,12 +10,14 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
 public class RepairRequestResponder extends AchieveREResponder {
     RepairAgent myAgent;
     Part faultyPart;
+    List<Part> userParts;
 
     public RepairRequestResponder(Agent a, MessageTemplate mt) {
         super(a, mt);
@@ -32,20 +34,29 @@ public class RepairRequestResponder extends AchieveREResponder {
         myAgent.println(request.getSender().getLocalName() + " is arrived. ");
         ACLMessage answer = request.createReply();
         Product product = null;
-        Object o = null;
-        try { o = request.getContentObject();}
-        catch (UnreadableException e) { myAgent.println("UnreadableException : contentObject = " + o ); throw new RuntimeException(e);}
-        try { product = (Product) o; }
-        catch (ClassCastException e) { myAgent.println("ClassCastException : contentObject = " + o ); throw new RuntimeException(e);}
+        Object[] o = null;
+        try { o = (Object[])request.getContentObject();}
+        catch (UnreadableException e) {
+            myAgent.println("UnreadableException : contentObject = " + o ); throw new RuntimeException(e);}
+        try { product = (Product) o[0]; }
+        catch (ClassCastException e) { myAgent.println("ClassCastException : object = " + product ); throw new RuntimeException(e);}
+        try { userParts = (List<Part>) o[1]; }
+        catch (ClassCastException e) { myAgent.println("ClassCastException : parts = " + userParts ); throw new RuntimeException(e);}
 
         myAgent.println(" with this product : " + product.getName());
 
         // identify the faulty part
         // sometimes the breakdown doesn't necessitate part, just a small repair
         // 80% of the time, the breakdown will require a part
-        if (hasard.nextDouble()<0.8){
+        faultyPart = product.getFaultyPart();
+
+        if (hasard.nextDouble()<0.2 || userParts!=null && userParts.contains(faultyPart)) {
+            answer.setPerformative(ACLMessage.AGREE);
+            myAgent.println("On va tenter de réparer cela ensemble...");
+        }
+        else
+        {
             answer.setPerformative(ACLMessage.REFUSE);
-            faultyPart = product.getFaultyPart();
             try { answer.setContentObject(faultyPart);} catch (IOException e) { throw new RuntimeException(e); }
             myAgent.println("Partie deffectueuse identifiée : " + faultyPart.name());
             myAgent.println("-".repeat(40));
@@ -59,10 +70,6 @@ public class RepairRequestResponder extends AchieveREResponder {
                 myAgent.println("Je recommande un achat de cette pièce et revenez nous voir !");
             }
         }
-        else{
-            answer.setPerformative(ACLMessage.AGREE);
-            myAgent.println("On va tenter de réparer cela ensemble...");
-        }
             myAgent.println("-".repeat(40));
         return answer;
     }
@@ -72,10 +79,12 @@ public class RepairRequestResponder extends AchieveREResponder {
     @Override
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
         ACLMessage answer = request.createReply();
-        if(Math.random()<0.8) {
+        if(Math.random()<0.8 || userParts.contains(faultyPart)) {
             answer.setPerformative(ACLMessage.INFORM);
             answer.setContent("Réparation effectuée avec succès" );
             myAgent.println("Réparation effectuée avec succès");
+            if(userParts.contains(faultyPart))
+                myAgent.println("car l'utilisateur avait la bonne piece");
         }
         else {
             answer.setPerformative(ACLMessage.FAILURE);
