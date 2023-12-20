@@ -102,7 +102,7 @@ public class UserAgent extends GuiAgent {
 
     private void followStepRepair() {
         ProductImage pi = null;
-        if(currentRepair==null) {
+        if(currentRepair==null || currentRepair.getState() == StateRepair.NoRdzVs) {
             pi = window.getProduct();
             pi.getP().getFaultyPart();
             currentRepair = new Repair(getAID(), pi);
