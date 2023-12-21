@@ -23,7 +23,7 @@ public class DistributorAgent extends RepairAgent {
 
         productList = new ArrayList<>();
         var l = Product.getListProducts() ;
-        for(var p:l)
+        for(var p:l)    
             if(Math.random()<0.35) productList.add(p);
         // I have my own prices
         for(var p:productList)p.setPrice(p.getPrice()*(0.7+Math.random()*0.6));
