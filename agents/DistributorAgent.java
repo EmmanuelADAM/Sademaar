@@ -1,8 +1,12 @@
 package agents;
 
+import behaviours.CFPartResponder;
+import behaviours.CFProductResponder;
 import data.Product;
+import data.StateRepair;
 import jade.core.AgentServicesTools;
 import jade.gui.SimpleWindow4Agent;
+import jade.lang.acl.MessageTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +37,13 @@ public class DistributorAgent extends RepairAgent {
         for(var p:productList)
             println("\t%s pour %.2f€".formatted(p.getName(), p.getPrice()));
 
+        addBehaviour(new CFProductResponder(this, MessageTemplate.MatchConversationId(StateRepair.NeedNewProduct.toString())));
+
     }
 
+
+
+    public List<Product> getProductList() {
+        return productList;
+    }
 }

@@ -1,5 +1,6 @@
 package agents;
 
+import behaviours.AskForProductBehaviour;
 import behaviours.RepairRequestInitiator;
 import data.*;
 import gui.UserGui;
@@ -149,7 +150,7 @@ public class UserAgent extends GuiAgent {
         currentRepair.setUserLevel(level);
 
         int patience = window.getPatience();
-        println("My patience to repair this product is of %d days ".formatted(patience));
+        println("My patience to repair this product isask4NewProduct of %d days ".formatted(patience));
         currentRepair.setUserPatience(patience);
 
         println("-".repeat(30));
@@ -207,7 +208,28 @@ public class UserAgent extends GuiAgent {
 
     private void ask4NewProduct() {
         println("Lancement d'un appel d'offres auprès des distributeurs de produits");
-        //TODO
+        //TODO: correct to ask a new product(here it's the copy of the ask for part)
+        println("Lancement d'un appel d'offres auprès des distributeurs de pièces");
+        ACLMessage msg = new ACLMessage(ACLMessage.CFP);
+        msg.setConversationId("id");
+        Product p = null;
+        try { msg.setContentObject(p); }
+        catch (IOException e) { throw new RuntimeException(e);}
+
+        var helpers = AgentServicesTools.searchAgents(this, "repair", "SparePartsStore");
+        //add the helpers to the map if they are not already there (the give a random level of confidence)
+        for(AID helper : helpers)
+            evaluationMap.computeIfAbsent(helper, k -> hasard.nextInt(MAXRATING)+1);
+
+        msg.addReceivers(helpers);
+        println("-".repeat(40));
+
+        msg.setConversationId(StateRepair.Ask4Parts.toString());
+        msg.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+        msg.setReplyByDate(new Date(System.currentTimeMillis() + 1000));
+
+        var askPart = new AskForProductBehaviour(this, msg, p);
+        addBehaviour(askPart);
     }
 
     private void coffeeShopFailed() {
@@ -234,7 +256,7 @@ public class UserAgent extends GuiAgent {
     }
 
     /**fucnction lauched when the user get ou of the coffe shop*/
-    public void getOuCoffeShop(StateRepair state){
+    public void getOutCoffeeShop(StateRepair state){
         currentRepair.setState(state);
         switch (state){
             case Done -> repairDone();
@@ -257,7 +279,7 @@ public class UserAgent extends GuiAgent {
 
 
     /**here we simplify the scenario. A breakdown is about 1 elt..
-     * so whe choose a no between 1 to 4 and ask who can repair at at wich cost.*/
+     * so whe choose a no between 1 to 4 and ask who can repair and at wich cost.*/
     private void breakdown(){
     }
 

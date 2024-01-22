@@ -1,0 +1,428 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": false,
+    "cutInterfaceStructures": false,
+    "cutDataStructures": false,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 6,
+    "backwardDepth": 6,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "agents.DistributorAgent",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_102715 { 
+   	label=gui
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   UserGui102715[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)UserGui</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   agent: UserAgent [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   bReset: JButton [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   comboChoixProduit: JComboBox&lt;ProductImage&gt; [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   comboRepairRdzVs: JComboBox&lt;RepairState&gt; [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   comboRepairs: JComboBox&lt;Repair&gt; [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jbOk: JButton [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jlChoixProduit: JLabel [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jlNiveau: JLabel [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jlRdzVs: JLabel [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jlRepairs: JLabel [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jlpatience: JLabel [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jpMain: JPanel [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   jscpane: JScrollPane [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   slideNiveau: JSlider [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   sliderPatience: JSlider [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   zoneTexte: JTextArea [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addRepair(repair: Repair)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ addRepairRdzVs(rdzVs: RepairState)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ createUserGui(title: String, agent: UserAgent): UserGui</TD></TR>
+<TR><TD ALIGN="LEFT" >+ main(args: String[])</TD></TR>
+<TR><TD ALIGN="LEFT" >+ println(txt: String)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_1419698674 { 
+   	label=agents
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   DistributorAgent1419698674[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DistributorAgent</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   productList: List&lt;Product&gt; [0..*]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+RepairAgent1419698674[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)RepairAgent</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ println(msg: String)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+RepairCoffeeAgent1419698674[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)RepairCoffeeAgent</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   maprdzvs: Map&lt;AID, List&lt;LocalDateTime&gt;&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   specialites: List&lt;ProductType&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addRdzVs(aid: AID, rdzvs: LocalDateTime)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+SparePartsStoreAgent1419698674[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)SparePartsStoreAgent</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   parts: List&lt;Part&gt; [0..*]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_1905501234 { 
+   	label="no qualified name"
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   noqualifiedname1905501234[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)UserAgent</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   coefDate: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   coefEvaluation: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   coefPrice: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   currentRepair: Repair [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   evaluationMap: Map&lt;AID, Integer&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   hasard: Random [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   helpers: List&lt;AID&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   products: List&lt;ProductImage&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   repairs: List&lt;Repair&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   skill: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   window: UserGui [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- ask4NewProduct()</TD></TR>
+<TR><TD ALIGN="LEFT" >- ask4Parts()</TD></TR>
+<TR><TD ALIGN="LEFT" >- ask4RdzVs(pi: ProductImage)</TD></TR>
+<TR><TD ALIGN="LEFT" >- ask4Repair()</TD></TR>
+<TR><TD ALIGN="LEFT" >- followStepRepair()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ onGuiEvent(evt: GuiEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >- repairDone()</TD></TR>
+<TR><TD ALIGN="LEFT" >- resetRepair()</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_288063318 { 
+   	label=behaviours
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   CFPartResponder288063318[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)CFPartResponder</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   myAgent: SparePartsStoreAgent [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   part: Part [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># handleAcceptProposal(cfp: ACLMessage, propose: ACLMessage, accept: ACLMessage): ACLMessage</TD></TR>
+<TR><TD ALIGN="LEFT" ># handleCfp(cfp: ACLMessage): ACLMessage</TD></TR>
+<TR><TD ALIGN="LEFT" ># handleRejectProposal(cfp: ACLMessage, propose: ACLMessage, reject: ACLMessage)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+CFProductResponder288063318[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)CFProductResponder</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   myAgent: DistributorAgent [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   product: Product [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># handleAcceptProposal(cfp: ACLMessage, propose: ACLMessage, accept: ACLMessage): ACLMessage</TD></TR>
+<TR><TD ALIGN="LEFT" ># handleCfp(cfp: ACLMessage): ACLMessage</TD></TR>
+<TR><TD ALIGN="LEFT" ># handleRejectProposal(cfp: ACLMessage, propose: ACLMessage, reject: ACLMessage)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+CFRdzVsResponder288063318[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)CFRdzVsResponder</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   myAgent: RepairCoffeeAgent [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   product: Product [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   rdzvs: LocalDateTime [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   userLevel: int [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># handleAcceptProposal(cfp: ACLMessage, propose: ACLMessage, accept: ACLMessage): ACLMessage</TD></TR>
+<TR><TD ALIGN="LEFT" ># handleCfp(cfp: ACLMessage): ACLMessage</TD></TR>
+<TR><TD ALIGN="LEFT" ># handleRejectProposal(cfp: ACLMessage, propose: ACLMessage, reject: ACLMessage)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+RepairRequestResponder288063318[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)RepairRequestResponder</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   faultyPart: Part [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   myAgent: RepairAgent [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   userParts: List&lt;Part&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># handleRequest(request: ACLMessage): ACLMessage</TD></TR>
+<TR><TD ALIGN="LEFT" ># prepareResultNotification(request: ACLMessage, response: ACLMessage): ACLMessage</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_3076010 { 
+   	label=data
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   ProductS
+   Part3076010[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Part</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   dangerous: boolean [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   difficulty: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   name: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   price: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   serialNumber: int [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ dangerous(): boolean</TD></TR>
+<TR><TD ALIGN="LEFT" >+ difficulty(): int</TD></TR>
+<TR><TD ALIGN="LEFT" >+ name(): String</TD></TR>
+<TR><TD ALIGN="LEFT" >+ price(): double</TD></TR>
+<TR><TD ALIGN="LEFT" >+ serialNumber(): int</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Product3076010[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Product</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   faultyPart: Part [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   id: long [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   name: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   price: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   spec: ProductSpec [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ main(args: String[])</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+ProductSpec3076010[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ProductSpec</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   bigParts: Part[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   smallParts: Part[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   standardPrice: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   type: ProductType [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># createProductSpec(spec: ProductType): ProductSpec</TD></TR>
+<TR><TD ALIGN="LEFT" >+ main(args: String[])</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Repair3076010[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Repair</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   cost: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   end: boolean [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   endDate: LocalDateTime [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   evaluation: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   listRepairStates: List&lt;RepairState&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   owner: AID [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   parts: List&lt;Part&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   productImg: ProductImage [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   repairAgents: List&lt;RepairAgent&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   startDate: LocalDateTime [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   state: StateRepair [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   userLevel: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   userPatience: int [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addCost(cost: Double)</TD></TR>
+<TR><TD ALIGN="LEFT" >- addFirstRdzVs()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ addRepairState(repairState: RepairState)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+'edges    
+CFPartResponder288063318 -> SparePartsStoreAgent1419698674[label="myAgent
+[0..1]"];
+CFProductResponder288063318 -> DistributorAgent1419698674[label="myAgent
+[0..1]"];
+CFRdzVsResponder288063318 -> RepairCoffeeAgent1419698674[label="myAgent
+[0..1]"];
+DistributorAgent1419698674 -> Product3076010[label="productList
+[0..*]"];
+Product3076010 -> Part3076010[label="faultyPart
+[0..1]"];
+Product3076010 -> ProductSpec3076010[label="spec
+[0..1]"];
+ProductSpec3076010 -> Part3076010[label="bigParts
+[0..*]"];
+ProductSpec3076010 -> Part3076010[label="smallParts
+[0..*]"];
+Repair3076010 -> RepairAgent1419698674[label="repairAgents
+[0..*]"];
+RepairAgent1419698674 -> DistributorAgent1419698674[arrowhead=none, arrowtail=empty, dir=both];
+RepairAgent1419698674 -> RepairCoffeeAgent1419698674[arrowhead=none, arrowtail=empty, dir=both];
+RepairAgent1419698674 -> SparePartsStoreAgent1419698674[arrowhead=none, arrowtail=empty, dir=both];
+RepairRequestResponder288063318 -> RepairAgent1419698674[label="myAgent
+[0..1]"];
+SparePartsStoreAgent1419698674 -> Part3076010[label="parts
+[0..*]"];
+UserGui102715 -> Repair3076010[label="comboRepairs
+[0..1]"];
+noqualifiedname1905501234 -> Repair3076010[label="currentRepair
+[0..1]"];
+noqualifiedname1905501234 -> Repair3076010[label="repairs
+[0..*]"];
+noqualifiedname1905501234 -> UserGui102715[label="window
+[0..1]"];
+    
+}
+@enduml

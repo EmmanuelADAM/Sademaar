@@ -67,7 +67,7 @@ public class ProductSpec implements Serializable {
             listProductType = new ArrayList<>(50);
             for(ProductType ps: ProductType.values())
                 listProductType.add(createProductSpec(ps));
-        }
+            }
         return listProductType;
     }
 

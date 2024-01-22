@@ -33,12 +33,12 @@ public class RepairRequestInitiator extends AchieveREInitiator {
         myAgent.println("Partie défectueuse identifiée : " + p.name());
         if(refuse.getConversationId().equals("DANGER")) {
             myAgent.println("Le msg est : \"La réparation de cette pièce est dangereuse, je recommande un achat d'un nouveau produit !\" ");
-            myAgent.getOuCoffeShop(StateRepair.NeedNewProduct);
+            myAgent.getOutCoffeeShop(StateRepair.NeedNewProduct);
         }
         else {
             myAgent.println("Le msg est : \"Commandez cette pièce et revenez nous voir !\"");
             myAgent.addPartToBuy(p);
-            myAgent.getOuCoffeShop(StateRepair.Ask4Parts);
+            myAgent.getOutCoffeeShop(StateRepair.Ask4Parts);
         }
     //TODO: poursuivre avec l'achat de la pièce ou du produit....
     }
@@ -48,7 +48,7 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     protected void handleInform(ACLMessage inform) {
         myAgent.println("from " + inform.getSender().getLocalName() +
                 ", I received this result: " + inform.getContent());
-        myAgent.getOuCoffeShop(StateRepair.RepairSuccess);
+        myAgent.getOutCoffeeShop(StateRepair.RepairSuccess);
     }
 
 
@@ -56,7 +56,7 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     protected void handleFailure(ACLMessage failure) {
         myAgent.println("from " + failure.getSender().getLocalName() +
                 ", I received this result: " + failure.getContent());
-        myAgent.getOuCoffeShop(StateRepair.RepairFailed);
+        myAgent.getOutCoffeeShop(StateRepair.RepairFailed);
     }
 
     @Override
