@@ -1,7 +1,7 @@
 <meta name="description" content="Programming multi-agent in Java : use of an updated version of the Jade 
 platform. Materials for Jade Tutorial : communication, protocols, votes, services, behaviors, ..." />
 
-# SADéMMaR :
+# SADéMMaR : <a name="top"></a>
 ## Sensibilisation- Accompagnement et aide à la Décision des Ménages dans le processus de Maintenance et Réparation
 
 ----
@@ -29,7 +29,7 @@ Voici le use case prévu pour la conception d'une application web de gestion des
 
 <img src="SademarUseCaseCoop.svg" alt="Sademaar UseCase Coop" width="600"/>
 
-
+*retour au [debut de la page](#top).*
 ---
 ### Specification<a name="specification"></a>
 
@@ -49,16 +49,19 @@ Très généralement, voici un diagrame de séquence pour la recherche de repair
 Voici les détails des interactions entre les différents acteurs : 
 ![coopReparation.png](coopReparation.png)
 
+*retour au [debut de la page](#top).*
 ---
 ### Specification détaillée<a name="specificationdetaillee"></a>
 
 Voici sous forme de diagramme d'activités l'ensemble du procédé inlut dans les codes fournis : 
 ![actititesPanne.png](actititesPanne.png)
 
+*retour au [debut de la page](#top).*
 ---
 ### Implementation<a name="implementation"></a>
 
-**Testez en lançant l'application [Sademaar.jar](Sademaar.jar)**.
+**Testez en téléchargeant l'application [https://github.com/EmmanuelADAM/Sademaar/blob/main/Sademaar.jar](Sademaar.jar)**.
+  - lancez simplement la commande `java -jar Sademaar.jar` ou en double cliquant sur le fichier.
 
 Dans le code, 
 - la classe principale est `LaunchAgents`:
@@ -126,5 +129,6 @@ Choix d'une offre d'un distributeur de pièces détachées :
 Choix d'une offre d'un distributeur de produits :
 - dépend du prix, de la confiance.
 
+*retour au [debut de la page](#top).*
 
 ---
