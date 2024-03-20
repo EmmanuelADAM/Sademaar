@@ -9,13 +9,21 @@ Ce dépôt contient des codes pour des agents simulant des interactions dans le 
 
 
 Voici le scenario:
- - des utilisateurs possèdent des produits
- - des produits peuvent être en panne
+ - des utilisateurs possèdent des produits,
+ - des produits peuvent être en panne,
  - plusieurs solutions sont disponibles :
    - tuto sur des website
    - repair cafés
    - distributeur de pièces de rechange
    - distributeurs.
+
+Il s'agit d'émuler la recherche de solution de réparation de la part d'une personne possédant un produit.
+Des agents sont utilisés pour cela. 
+L'aspect 'réparation par suivi de tuto' n'est pas présent, objectif étant d'étudier les interactions entre les acteurs du processus de réparation.
+Des critères (coût, durée, confiance, ...) entrent en compte dans ce processus.
+
+L'application dans son état actuel représente des classes génériques d'acteurs. 
+De ces classes peuvent être générées des classes plus précises, plus fines, représentant des comportements spécifiques.
 
 Vous trouverez dans ce fichier : 
 - [le use case](#usecase)
