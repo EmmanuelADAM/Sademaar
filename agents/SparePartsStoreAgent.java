@@ -43,7 +43,7 @@ public class SparePartsStoreAgent extends RepairAgent {
             if(Math.random()<0.35) parts.add(new Part(p, 0.7+Math.random()*0.6));
         // I have my own prices
 
-        println("J'ai " + parts.size() + " références de pièces détâchées.");
+        println("J'ai " + parts.size() + " références de pièces détachées.");
         println("Voici la liste : ");
         for(var p:parts)
             println("\t%s".formatted(p));

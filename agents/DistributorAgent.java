@@ -27,7 +27,7 @@ public class DistributorAgent extends RepairAgent {
         Random hasard = new Random();
         coord = new Point(hasard.nextInt(100), hasard.nextInt(100));
         println("Je suis au point (%d,%d)".formatted(coord.x, coord.y) );
-        println("Bonjour, voulez-vous une pièce de rechange  ?");
+        println("Bonjour, voulez-vous une produit ?");
 
         productList = new ArrayList<>();
         var l = Product.getListProducts() ;
