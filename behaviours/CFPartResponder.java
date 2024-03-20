@@ -29,13 +29,15 @@ public class CFPartResponder extends ContractNetResponder {
         myAgent.println("~".repeat(40));
         try {  part = (Part)cfp.getContentObject();
         } catch (UnreadableException e) { throw new RuntimeException(e);}
-        myAgent.println("%s ask for this kind of part '%s' ".formatted(cfp.getSender().getLocalName(), part.name()));
+        myAgent.println("%s demande ce type de pièce '%s' ".formatted(cfp.getSender().getLocalName(), part.name()));
         ACLMessage answer = cfp.createReply();
 
         var parts = myAgent.getParts();
         int index = parts.indexOf(part);
         if ( index == -1) {
-            myAgent.println("I don't sell this part");
+            var content = "Je ne vends pas cette pièce..";
+            myAgent.println(content);
+            answer.setContent(content);
             answer.setPerformative(ACLMessage.REFUSE);
             throw new RefuseException(answer);
         }
@@ -54,12 +56,14 @@ public class CFPartResponder extends ContractNetResponder {
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         ACLMessage msg = accept.createReply();
-        myAgent.println("=".repeat(15));
+        myAgent.println("=".repeat(10));
+        myAgent.println("PROPOSITION ACCEPTEE");
+        myAgent.println(cfp.getSender().getLocalName() + " a demandé cet élément " + part.name());
         try {
-            myAgent.println(" I proposed " + propose.getContentObject());
+            myAgent.println(" J'ai proposé un prix de %.2f €".formatted((Double)propose.getContentObject()));
             msg.setContentObject(part); }
         catch (UnreadableException|IOException e) { throw new RuntimeException(e); }
-        myAgent.println(cfp.getSender().getLocalName() + " accepted my proposal and sent the result:  " + accept.getContent());
+        myAgent.println(cfp.getSender().getLocalName() + " a accepté ma proposition et a retourné :  " + accept.getContent());
         msg.setPerformative(ACLMessage.INFORM);
         return msg;
     }
@@ -71,11 +75,10 @@ public class CFPartResponder extends ContractNetResponder {
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
         myAgent.println("=".repeat(10));
-        myAgent.println("PROPOSAL REJECTED");
-        myAgent.println(cfp.getSender().getLocalName() + " asked to repair elt no " + cfp.getContent());
-        myAgent.println(" I proposed " + propose.getContent());
-        myAgent.println(cfp.getSender().getLocalName() + " refused ! with this message: " + reject.getContent());
+        myAgent.println("PROPOSITION REJETEE");
+        myAgent.println(cfp.getSender().getLocalName() + " a demandé cet élément " + part.name());
+        try { myAgent.println(" J'ai proposé un prix de %.2f €".formatted((Double)propose.getContentObject()));}
+        catch (UnreadableException e) { throw new RuntimeException(e); }
+        myAgent.println(cfp.getSender().getLocalName() + " a refusé avec ce message : " + reject.getContent());
     }
-
-
 }

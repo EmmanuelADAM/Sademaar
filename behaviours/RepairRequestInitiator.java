@@ -22,13 +22,13 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     // its result
     @Override
     protected void handleAgree(ACLMessage agree) {
-        myAgent.println("agreement received from " + agree.getSender().getLocalName());
+        myAgent.println("Accord reçu de " + agree.getSender().getLocalName());
     }
 
     //function triggered by a REFUSE msg, the sender refuse to participate in the request
     @Override
     protected void handleRefuse(ACLMessage refuse) {
-        myAgent.println("refuse received from " + refuse.getSender().getLocalName());
+        myAgent.println("Refus reçu de " + refuse.getSender().getLocalName());
         try { p = (Part)refuse.getContentObject();} catch (UnreadableException e) { throw new RuntimeException(e); }
         myAgent.println("Partie défectueuse identifiée : " + p.name());
         if(refuse.getConversationId().equals("DANGER")) {
@@ -46,16 +46,16 @@ public class RepairRequestInitiator extends AchieveREInitiator {
     //function triggered by an INFORM msg, the sender send its result
     @Override
     protected void handleInform(ACLMessage inform) {
-        myAgent.println("from " + inform.getSender().getLocalName() +
-                ", I received this result: " + inform.getContent());
+        myAgent.println("De " + inform.getSender().getLocalName() +
+                ", j'ai reçu ce résultat : " + inform.getContent());
         myAgent.getOutCoffeeShop(StateRepair.RepairSuccess);
     }
 
 
     @Override
     protected void handleFailure(ACLMessage failure) {
-        myAgent.println("from " + failure.getSender().getLocalName() +
-                ", I received this result: " + failure.getContent());
+        myAgent.println("De " + failure.getSender().getLocalName() +
+                ", j'ai reçu ce résultat: " + failure.getContent());
         myAgent.getOutCoffeeShop(StateRepair.RepairFailed);
     }
 

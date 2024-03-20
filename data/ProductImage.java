@@ -31,7 +31,12 @@ public class ProductImage implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Product %s, interest=%d, maxPriceRepairing=%.2f ", p , interest, maxPriceRepairing);
+    return p.getName();
+        //        return String.format("%s, intérêt=%d, prix max de réparation=%.2f ", p , interest, maxPriceRepairing);
+    }
+
+    public String toStringDetails() {
+        return String.format("%s,\n intérêt=%d, prix max de réparation=%.2f ", p , interest, maxPriceRepairing);
     }
 
     public Product getP() {

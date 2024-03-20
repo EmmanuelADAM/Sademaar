@@ -4,15 +4,17 @@ import behaviours.CFRdzVsResponder;
 import behaviours.RepairRequestResponder;
 import data.ProductType;
 import data.StateRepair;
+import gui.UserGui;
 import jade.core.AID;
 import jade.core.AgentServicesTools;
 import jade.gui.SimpleWindow4Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.awt.Color;
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 
 
 public class RepairCoffeeAgent extends RepairAgent {
@@ -30,14 +32,18 @@ public class RepairCoffeeAgent extends RepairAgent {
 
         this.window = new SimpleWindow4Agent(getLocalName(),this);
         this.window.setBackgroundTextColor(Color.orange);
-        println("hello, my specialities are on these products:" + specialites);
-        println("hello, do you want coffee ?");
+        println("Bonjour, je représente un repair café.");
+        Random hasard = new Random();
+        coord = new Point(hasard.nextInt(100), hasard.nextInt(100));
+        println("Je suis au point (%d,%d)".formatted(coord.x, coord.y) );
+        println("Je suis spécialisé dans ces produits :" + specialites);
+        println("Voulez-vous un café ?");
         println("-".repeat(20));
 
 
         //registration to the yellow pages (Directory Facilitator Agent)
         AgentServicesTools.register(this, "repair", "coffee");
-        println("I'm just registered as a repair-coffee");
+        println("Je suis enregistré en tant que repair café");
 
         addBehaviour(new CFRdzVsResponder(this, MessageTemplate.MatchConversationId(StateRepair.Ask4RdzVs.toString())));
 

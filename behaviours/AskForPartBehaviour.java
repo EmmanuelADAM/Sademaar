@@ -24,6 +24,9 @@ public class AskForPartBehaviour extends ContractNetInitiator {
     Part p;
     /**evaluation of the sellers*/
     Map<AID, Integer> evaluationMap;
+    /**price of the chosen part*/
+    Double price = -1d;
+
 
 
     public AskForPartBehaviour(Agent a, ACLMessage cfp, Part p) {
@@ -43,7 +46,7 @@ public class AskForPartBehaviour extends ContractNetInitiator {
         Double prix = 0d;
         try {
             prix = (Double)propose.getContentObject();
-            a.getWindow().println("%s\tproposes %.2f,\t my eval about it is %d/%d".formatted(propose.getSender().getLocalName(), prix, evaluationMap.get(propose.getSender()), UserAgent.MAXRATING));
+            a.getWindow().println("%s\tpropose %.2f,\t mon évaluation de cet agent est de  %d/%d".formatted(propose.getSender().getLocalName(), prix, evaluationMap.get(propose.getSender()), UserAgent.MAXRATING));
       }
         catch (UnreadableException e) { throw new RuntimeException(e);}
     }
@@ -63,23 +66,22 @@ public class AskForPartBehaviour extends ContractNetInitiator {
         ArrayList<ACLMessage> listeProposals = new ArrayList<>(responses);
         ACLMessage bestProposal = null;
         //difference between dates in minutes
-        Double price = 0d;
+        price = 0d;
         double pref = 0.0;
         double bestPref = Double.MAX_VALUE;
         double prefPrice = 0.0;
         double prefEval = 0.0;
         double maxPrice = 0.0;
         List<Part> list = null;
-        if(p.serialNumber()%1000==0)  list = ProductSpec.getListBigParts();
-        else list = ProductSpec.getListSmallParts();
+        if(p.serialNumber()/1000==0)  list = ProductSpec.getListSmallParts();
+        else list = ProductSpec.getListBigParts();
         int index = list.indexOf(p);
         maxPrice = list.get(index).price();
-//TODO: some times its bugs with big parts (???) (ex LaveVaisselle-Bp1)
-// we keep only the proposals only
+        // we keep only the proposals only
         listeProposals.removeIf(v -> v.getPerformative() != ACLMessage.PROPOSE);
         acceptances.clear();
         a.println("-".repeat(30));
-        a.println("I have all the responses.. to sum-up : ");
+        a.println("J'ai toutes les propositions, pour résumer : ");
 
         ACLMessage bestAnswer =null;
 
@@ -87,7 +89,7 @@ public class AskForPartBehaviour extends ContractNetInitiator {
             //by default, we build a accept answer for each proposal
             var answer = proposal.createReply();
             answer.setPerformative(ACLMessage.REJECT_PROPOSAL);
-            answer.setContent("This rdz-vs doesn't with my agenda...");
+            answer.setContent("J'ai déjà une offre...");
             acceptances.add(answer);
             try {
                 price = (Double) proposal.getContentObject();
@@ -102,16 +104,16 @@ public class AskForPartBehaviour extends ContractNetInitiator {
             } catch (UnreadableException e) {
                 throw new RuntimeException(e);
             }
-            a.println("%s\t has proposed %.2f ".formatted(proposal.getSender().getLocalName(), price));
-            if (pref!=Double.MAX_VALUE) a.println("\t prefPrice=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefPrice, prefEval, pref));
+            a.println("%s\t a proposé %.2f ".formatted(proposal.getSender().getLocalName(), price));
+            if (pref!=Double.MAX_VALUE) a.println("\t prix ressenti=%.2f, confiance ressentie=%.2f, valeur=%.2f".formatted(prefPrice, prefEval, pref));
         }
         a.println(".".repeat(30));
         if(bestAnswer!=null) {
             bestAnswer.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-            bestAnswer.setContent("I accept the proposal...");
-            a.println("I choose the proposal of " + bestProposal.getSender().getLocalName());
+            bestAnswer.setContent("J'accepte la proposition...");
+            a.println("Je choisis la proposition de " + bestProposal.getSender().getLocalName());
         } else {
-            a.println("I got no proposal !!!! I'll retry later :-( ...... ");
+            a.println("Je n'ai reçu aucune proposition !!!! Je retenterai :-( ...... ");
             a.setCurrentRepair(null);
         }
         a.getWindow().println("-".repeat(40));
@@ -122,14 +124,14 @@ public class AskForPartBehaviour extends ContractNetInitiator {
     //function triggered by a INFORM msg : a voter accept the result
     // @Override
     protected void handleInform(ACLMessage inform) {
-        a.getWindow().println("the sell is accepted by " + inform.getSender().getLocalName());
+        a.getWindow().println("La vente est acceptée par " + inform.getSender().getLocalName());
         Object content = null;
         try { content = inform.getContentObject();}
         catch (UnreadableException e) { a.println("the content is not an object : " + content);throw new RuntimeException(e);}
         Part acceptedPart = null;
         if (content instanceof Part) acceptedPart = (Part) content;
         else a.println("the content is not a part : " + acceptedPart);
-        a.setBuyedPart(inform.getSender(), acceptedPart);
+        a.setBuyedPart(inform.getSender(), acceptedPart, price);
     }
 
 

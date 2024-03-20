@@ -58,7 +58,7 @@ public class RepairRequestResponder extends AchieveREResponder {
         {
             answer.setPerformative(ACLMessage.REFUSE);
             try { answer.setContentObject(faultyPart);} catch (IOException e) { throw new RuntimeException(e); }
-            myAgent.println("Partie deffectueuse identifiée : " + faultyPart.name());
+            myAgent.println("Partie défectueuse identifiée : " + faultyPart.name());
             myAgent.println("-".repeat(40));
             if(faultyPart.dangerous())
             {

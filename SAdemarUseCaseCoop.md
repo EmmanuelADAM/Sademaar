@@ -16,7 +16,7 @@ testdot
 
 <div hidden>
 ```
-@startuml GlobalUseCase
+@startuml SADeMMaRUseCaseCoop
 '!pragma layout smetana
 left to right direction
 

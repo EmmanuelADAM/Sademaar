@@ -33,7 +33,7 @@ rc1 --> user1: creneau (date, heure)
 rc2 --> user1: refus (ne gère pas ce type de produit)
 rc3 --> user1: creneau (date, heure)
 rc4 --> user1: refus (pas de créneau disponible dans une en temps raisonable)
-user1 <- user1: choix rdz-vs
+user1 <- user1: choix rdz-vs \n(selon date, proximité, confiance)
 user1 ->  rc3: acceptation rdz-vs
 rc3 ->  user1: confirmation
 @enduml```
@@ -74,7 +74,7 @@ pd2 --> user1: pas en stock
 user1 -> pds1: dmd devis P
 pds1 --> user1: devis P'1
 end
-user1 <- user1: choix selon \nprix et confiance
+user1 <- user1: choix selon \ncritères précités (prix, confiance, qualité, ...)
 activate user1
 deactivate user1
 
@@ -110,7 +110,7 @@ alt#Gold #BBFFDD interet financier à réparer
     end
 else #FFEAEA interet limité dans la réparation: remplacement
     user1 -> site:dmd distributeurs type produit
-    note left: coût de la réparation\n proche de l'achat d'un nouveau produit.\n Contact des distributeurs adéquats.
+    note left: coût de la réparation\n proche de l'achat d'un nouveau produit.\n Réparation non appréciée.\n => Contact des distributeurs adéquats.
     user1 <-- site:liste distributeurs
     user1 -> d1:dmd produit remplacement
     user1 <-- d1:  nvo_produit

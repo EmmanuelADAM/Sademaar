@@ -28,13 +28,13 @@ public class CFProductResponder extends ContractNetResponder {
         myAgent.println("~".repeat(40));
         try {  product = (Product)cfp.getContentObject();
         } catch (UnreadableException e) { throw new RuntimeException(e);}
-        myAgent.println("%s ask for this kind of part '%s' ".formatted(cfp.getSender().getLocalName(), product.getName()));
+        myAgent.println("%s demande pour ce type de piece '%s' ".formatted(cfp.getSender().getLocalName(), product.getName()));
         ACLMessage answer = cfp.createReply();
 
         var products = myAgent.getProductList();
         int index = products.indexOf(product);
         if ( index == -1) {
-            myAgent.println("I don't sell this product");
+            myAgent.println("Je ne vends pas ce produit..");
             answer.setPerformative(ACLMessage.REFUSE);
             throw new RefuseException(answer);
         }
@@ -55,10 +55,10 @@ public class CFProductResponder extends ContractNetResponder {
         ACLMessage msg = accept.createReply();
         myAgent.println("=".repeat(15));
         try {
-            myAgent.println(" I proposed " + propose.getContentObject());
+            myAgent.println(" J'ai proposé " + propose.getContentObject());
             msg.setContentObject(product); }
         catch (UnreadableException|IOException e) { throw new RuntimeException(e); }
-        myAgent.println(cfp.getSender().getLocalName() + " accepted my proposal and sent the result:  " + accept.getContent());
+        myAgent.println(cfp.getSender().getLocalName() + " a accepté ma proposition et a envoyé ceci :  " + accept.getContent());
         msg.setPerformative(ACLMessage.INFORM);
         return msg;
     }
@@ -70,11 +70,9 @@ public class CFProductResponder extends ContractNetResponder {
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
         myAgent.println("=".repeat(10));
-        myAgent.println("PROPOSAL REJECTED");
-        myAgent.println(cfp.getSender().getLocalName() + " asked to repair elt no " + cfp.getContent());
-        myAgent.println(" I proposed " + propose.getContent());
-        myAgent.println(cfp.getSender().getLocalName() + " refused ! with this message: " + reject.getContent());
+        myAgent.println("PROPOSITION REJETEE");
+        myAgent.println(cfp.getSender().getLocalName() + " a demandé de réparer cet élément : " + cfp.getContent());
+        myAgent.println(" J'ai proposé " + propose.getContent());
+        myAgent.println(cfp.getSender().getLocalName() + " a refusé avec ce message: " + reject.getContent());
     }
-
-
 }

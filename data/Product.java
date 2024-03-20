@@ -45,7 +45,7 @@ public class Product implements Serializable {
 
         @Override
     public String toString() {
-        return String.format("Product{ %d : %s - %s - %.2f€}", id, name, spec, price);
+        return String.format("Produit{ %d : %s - %n%s - %n%.2f€}", id, name, spec, price);
     }
 
 

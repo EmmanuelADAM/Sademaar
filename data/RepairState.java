@@ -1,10 +1,15 @@
 package data;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import jade.core.AID;
 public class RepairState {
     LocalDateTime date;
+
+
+
+    LocalDateTime endDate;
     AID userAgent;
     AID repairAgent;
     Product product;
@@ -19,6 +24,17 @@ public class RepairState {
         this.product = product;
         this.state = state;
     }
+
+    public RepairState(RepairState original) {
+        this.date = original.date;
+        this.userAgent = original.userAgent;
+        this.repairAgent = original.repairAgent;
+        this.product = original.product;
+        this.state = original.state;
+        this.nextState = original.nextState;
+        this.conclusion = original.conclusion;
+    }
+
 
     public LocalDateTime getDate() {
         return date;
@@ -76,12 +92,17 @@ public class RepairState {
         this.conclusion = conclusion;
     }
 
+    public void setEndDate(LocalDateTime endDate) {this.endDate = endDate; }
+    public LocalDateTime getEndDate() { return endDate; }
+
     @Override
     public String toString() {
-        return "RepairState{" +
-                "date=" + date +
-                (repairAgent==null?"":", repairAgent=" + repairAgent.getLocalName())
-                + ", state=" + state +
+        date.format(java.time.format.DateTimeFormatter.ISO_DATE_TIME);
+        return "Etat de reparation{" +
+                "\n  date=" + date.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")) +
+                (endDate==null?"":"\n  , date de fin =" + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")) + "\n") +
+                (repairAgent==null?"":"\n  , agent reparateur=" + repairAgent.getLocalName()) +
+                "\n  , etat=" + state +
                 '}';
     }
 }

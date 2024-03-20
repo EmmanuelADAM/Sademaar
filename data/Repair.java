@@ -4,6 +4,7 @@ import agents.RepairAgent;
 import jade.core.AID;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class Repair {
     AID owner;
     /**the product to repair*/
     ProductImage productImg;
+
     /**identified parts of the product*/
     List<Part> parts;
     /**list of repair agents implied in the repair*/
@@ -158,15 +160,16 @@ public class Repair {
 
     @Override
     public String toString() {
-        return "Repair{" +
-                "productImg=" + productImg.p.name +
-                ", end=" + end +
-                ", startDate=" + startDate +
-                ", cost=" + cost +
-                ", state=" + state +
-                ", parts=" + parts +
-                ", userLevel=" + userLevel +
-                ", userPatience=" + userPatience +
+        return "Reparation{" +
+                "\n imgProduit=" + productImg.p.name +
+                "\n  , finie=" + end +
+                "\n  , début=" + startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) +
+(endDate==null?"":"\n  , date de fin =" + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))) +
+                "\n  , coût=%.2f".formatted(cost) +
+                "\n  , état=" + state +
+                "\n  , pièces=" + parts +
+                "\n  , expérience utilisateur=" + userLevel +
+                "\n  , délai d'attente maximum=" + userPatience +
                 '}';
     }
 }

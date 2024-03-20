@@ -83,8 +83,8 @@ public class ProductSpec implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s,  difficulty=%d, transportable=%b, danger=%b "+// +
-                "\n\tsmallParts=%s\n\tbigParts=%s",
+        return String.format("%s,  difficulté=%d, transportable=%b, danger=%b "+// +
+                "\n\tnb petites pièces=%s\n\tnb grandes pièces=%s",
                 this.type.name(), type.difficulty, type.transportable, type.danger,
                 Arrays.toString(smallParts), Arrays.toString(bigParts));
     }

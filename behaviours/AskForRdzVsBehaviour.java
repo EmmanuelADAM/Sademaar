@@ -10,6 +10,7 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import agents.UserAgent;
 
+import java.awt.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -41,8 +42,10 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     public void handlePropose(ACLMessage propose, List<ACLMessage> acceptances) {
         LocalDateTime creneau = null;
         try {
-            creneau = (LocalDateTime)propose.getContentObject();
-            a.getWindow().println("%s\tproposes %s,\t my eval about it is %d/%d".formatted(propose.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")), evaluationMap.get(propose.getSender()), UserAgent.MAXRATING));
+            Object[]tabContent = (Object[])propose.getContentObject();
+            creneau = (LocalDateTime)tabContent[0];
+            var coord = (Point)tabContent[1];
+            a.getWindow().println("%s propose %s,\n   mon degré de confiance enver lui est de %d/%d,\n    il est en (%d,%d)".formatted(propose.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")), evaluationMap.get(propose.getSender()), UserAgent.MAXRATING, coord.x, coord.y));
 //            var duration = Duration.between(startingDate, creneau);
 //            a.getWindow().println("\t in %d hours..".formatted(duration.toHours()));
       }
@@ -74,11 +77,15 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
         double bestPref = Double.MAX_VALUE;
         double prefDate = 0.0;
         double prefEval = 0.0;
+        //for this simulation, the position are in a square 100x100
+        double maxDist = 150;
+        double prefDist = 0.0;
+        Point coord;
         //we keep only the proposals only
         listeProposals.removeIf(v -> v.getPerformative() != ACLMessage.PROPOSE);
         acceptances.clear();
         a.println("-".repeat(30));
-        a.println("I have all the responses.. to sum-up : ");
+        a.println("J'ai reçu toutes les réponses... Pour résumer : ");
 
         ACLMessage bestAnswer =null;
 
@@ -87,16 +94,19 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
             //by default, we build a accept answer for each proposal
             var answer = proposal.createReply();
             answer.setPerformative(ACLMessage.REJECT_PROPOSAL);
-            answer.setContent("This rdz-vs doesn't with my agenda...");
+            answer.setContent("Ce rdz-vs ne coïncide pas avec mon agenda...");
             acceptances.add(answer);
             try {
-                creneau = (LocalDateTime) proposal.getContentObject();
+                Object[]tabContent = (Object[])proposal.getContentObject();
+                creneau = (LocalDateTime)tabContent[0];
+                coord = (Point)tabContent[1];
                 if (creneau.isBefore(lastPossibleDate))
                 {
                     dateGap = Duration.between(startingDate, creneau);
                     prefDate = (double)dateGap.toHours()  / patienceHours;
                     prefEval = Math.max(0, 1. - (double) evaluationMap.get(proposal.getSender()) /UserAgent.MAXRATING);
-                    pref =  prefDate*a.getCoefDate() + prefEval*a.getCoefEvaluation();
+                    prefDist = a.getCoord().distance(coord)/maxDist;
+                    pref =  prefDate*a.getCoefDate() + prefEval*a.getCoefEvaluation() + prefDist*a.getCoefDist();
                     if (pref<bestPref){
                         bestPref = pref;
                         bestProposal = proposal;
@@ -107,16 +117,17 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
             } catch (UnreadableException e) {
                 throw new RuntimeException(e);
             }
-            a.println("%s\t has proposed %s ".formatted(proposal.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
-            if (pref!=Double.MAX_VALUE) a.println("\t prefDate=%.2f, prefEval=%.2f, pref=%.2f".formatted(prefDate, prefEval, pref));
+            a.println("%s\t a proposé %s ".formatted(proposal.getSender().getLocalName(), creneau.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm"))));
+            if (pref!=Double.MAX_VALUE)
+                a.println("\t intérêt pour la date=%.2f, intérêt pour la confiance =%.2f, intérêt pour la distance =%.2f, pref=%.2f".formatted(prefDate, prefEval, prefDist, pref));
         }
         a.println(".".repeat(30));
         if(bestAnswer!=null) {
             bestAnswer.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-            bestAnswer.setContent("I accept the rdz-vs...");
-            a.println("I choose the proposal of " + bestProposal.getSender().getLocalName());
+            bestAnswer.setContent("J'accepte le rdz-vs...");
+            a.println("Je choisis la proposition de " + bestProposal.getSender().getLocalName());
         } else {
-            a.println("I got no proposal !!!! I'll retry later :-( ...... ");
+            a.println("Je n'ai eu aucune proposition intéressante !!! Je retenterai plus tard :-( ...... ");
             RepairState repairState = new RepairState(null, myAgent.getAID(), null,   pi.getP(), StateRepair.NoRdzVs);
             a.addRepairState(repairState);
         }
@@ -128,7 +139,7 @@ public class AskForRdzVsBehaviour extends ContractNetInitiator {
     //function triggered by a INFORM msg : a voter accept the result
     // @Override
     protected void handleInform(ACLMessage inform) {
-        a.getWindow().println("the rdz-vs is accepted by " + inform.getSender().getLocalName());
+        a.getWindow().println("Le rendez-vous est accepté par " + inform.getSender().getLocalName());
         LocalDateTime dateRdzVs = null;
         try { dateRdzVs = (LocalDateTime) inform.getContentObject();}
         catch (UnreadableException e) { throw new RuntimeException(e);}

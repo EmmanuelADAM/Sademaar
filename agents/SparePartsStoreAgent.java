@@ -12,9 +12,10 @@ import jade.gui.SimpleWindow4Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SparePartsStoreAgent extends RepairAgent {
 
@@ -24,11 +25,14 @@ public class SparePartsStoreAgent extends RepairAgent {
     public void setup(){
         this.window = new SimpleWindow4Agent(getLocalName(),this);
         this.window.setBackgroundTextColor(Color.cyan);
-        println("Hello, do you want a piece of something ?");
-
+        println("Bonjour");
         //registration to the yellow pages (Directory Facilitator Agent)
         AgentServicesTools.register(this, "repair", "SparePartsStore");
-        println("I'm just registered as a Spare Parts Store");
+        println("Je suis enregistré en tant que vendeur de pièces détâchées");
+        Random hasard = new Random();
+        coord = new Point(hasard.nextInt(100), hasard.nextInt(100));
+        println("Je suis au point (%d,%d)".formatted(coord.x, coord.y) );
+        println("Bonjour, voulez-vous une pièce de rechange  ?");
 
         parts = new ArrayList<>();
         var l = ProductSpec.getListSmallParts();
@@ -39,8 +43,8 @@ public class SparePartsStoreAgent extends RepairAgent {
             if(Math.random()<0.35) parts.add(new Part(p, 0.7+Math.random()*0.6));
         // I have my own prices
 
-        println("I have " + parts.size() + " references of spare parts ");
-        println("Here are the spare parts I can sell : ");
+        println("J'ai " + parts.size() + " références de pièces détâchées.");
+        println("Voici la liste : ");
         for(var p:parts)
             println("\t%s".formatted(p));
 

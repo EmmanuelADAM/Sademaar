@@ -14,7 +14,7 @@ Case study for ISSIA'23.
 @startuml actititesPanne
 !pragma useVerticalIf on
 skinparam ConditionEndStyle hline
-|Utilisateur|
+|Utilisateur/trice|
 start
 'partition "déclarer panne"{
 #FFDD00:se connecter;
@@ -98,7 +98,7 @@ case (panne fatale)
 :guider vers\n achat produit;
 endswitch
 end if
-|Utilisateur|
+|Utilisateur/trice|
 if (arret reparation) then (oui)
 #FF9900:enregistrer 'echec';
 end;

@@ -13,8 +13,10 @@ import jade.lang.acl.ACLMessage;
 import behaviours.AskForRdzVsBehaviour;
 import behaviours.AskForPartBehaviour;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /** an agent that represent a user
  * - the user choose an object to repair, define its level of expertise regarding it
@@ -36,6 +38,10 @@ public class UserAgent extends GuiAgent {
 
     /**data used by the user to represent its products*/
     List<ProductImage> products;
+
+    /**replacement part that owns the agent*/
+    List<Part> parts;
+
     /**data used by the user to represent its products*/
     List<Repair> repairs;
 
@@ -44,12 +50,18 @@ public class UserAgent extends GuiAgent {
     /**map each aid of a repair agent to its evaluation*/
     Map<AID, Integer> evaluationMap;
 
+
+    /**importance of the distance to take a rdz-vs*/
+    double coefDist;
     /**importance of the date to take a rdz-vs*/
     double coefDate;
     /**importance of the price to choose a product or a part*/
     double coefPrice;
     /**importance of the evaluation to take a rdz-vs*/
     double coefEvaluation;
+
+    /**coordinate of the user*/
+    Point coord;
 
     /**simple object to provide random number, choice, ....*/
     Random hasard;
@@ -66,6 +78,7 @@ public class UserAgent extends GuiAgent {
         hasard = new Random();
         //add some products choosen randomly in the list Product.getListProducts()
         products = new ArrayList<>();
+        parts = new ArrayList<>();
         int nbTypeOfProducts = ProductType.values().length;
         int nbPoductsByType = 2*Product.VARIATION/Product.VARIATIONSTEP +1;
         var existingProducts = Product.getListProducts();
@@ -79,11 +92,14 @@ public class UserAgent extends GuiAgent {
         //init the coefs
         evaluationMap = new HashMap<>();
         repairs = new ArrayList<>();
+        coefDist = ((int)(hasard.nextDouble()*10)+1)/10.0;
         coefDate = ((int)(hasard.nextDouble()*10)+1)/10.0;
         coefEvaluation = ((int)(hasard.nextDouble()*10)+1)/10.0;
+        coord = new Point(hasard.nextInt(100), hasard.nextInt(100));
         // create the window
         this.window = UserGui.createUserGui(getLocalName(), this);//SimpleWindow4Agent(getLocalName(), this);
-        println("Hello!");
+        println("Hello!, je suis l'agent utilisateur");
+        println("Je suis au point (%d,%d)".formatted(coord.x, coord.y) );
         println("Choisissez un produit à réparer, votre niveau d'expérience dans la réparation de ce produit et envoyer un appel à l'aide");
         println("Puis choisissez une option de réparation qui vous est proposé");
         println("-".repeat(30));
@@ -108,11 +124,13 @@ public class UserAgent extends GuiAgent {
             pi.getP().getFaultyPart();
             currentRepair = new Repair(getAID(), pi);
             repairs.add(currentRepair);
+            currentRepair.setUserPatience(window.getPatience());
+            currentRepair.setUserLevel(window.getLevel());
             window.addRepair(currentRepair);
-            println("I want to repair this : " + pi.getP().getName());
+            println("Je souhaite réparer ceci : " + pi.getP().getName());
         }
         else pi = currentRepair.getProductImg();
-        println("current repair : " + currentRepair);
+        println("Réparation en cours : " + currentRepair);
 
         //for the moment, I suppose there is only one type of event, click on go
         switch(currentRepair.getState()){
@@ -123,7 +141,7 @@ public class UserAgent extends GuiAgent {
             case NeedNewProduct ->  ask4NewProduct();
             case PartReceived ->  ask4RdzVs(pi);
             case Done -> repairDone();
-            case NoPart -> println("the last repair fail with no part found... you should ask for a new product, sorry.....");
+            case NoPart -> println("La dernière réparation a échoué; aucune pièce ne peut être réparée ou changée... Il vous faudrait acheter un nouveau produit, désolé.....");
             default -> println("unknown state : " + currentRepair.getState());
         }
     }
@@ -146,21 +164,22 @@ public class UserAgent extends GuiAgent {
         println("-".repeat(30));
 
         int level = window.getLevel();
-        println("My skill to repair this product is of : " + window.getLevel());
+        println("Mon expérience pour réparer ce produit est de  : " + window.getLevel());
         currentRepair.setUserLevel(level);
 
         int patience = window.getPatience();
-        println("My patience to repair this product isask4NewProduct of %d days ".formatted(patience));
+        println("Mon délai de patience avant l'obtention du rendez-vous est de : %d jours ".formatted(patience));
         currentRepair.setUserPatience(patience);
 
         println("-".repeat(30));
         var helpersLocalNames = helpers.stream().map(AID::getLocalName).toList();
-        println("found this agent that could help me : " + helpersLocalNames);
+        println("J'ai trouvé ces agents qui pourrient éventuellemet m'aider : " + helpersLocalNames);
 
         println("-".repeat(30));
-        println("to make my choice, my preference about the date is of " + coefDate);
-        println("my preference about the evaluation of the repair coffee is of " + coefEvaluation);
-        println("and patience is of " + patience + " days max");
+        println("Pour faire mon choix, l'intérêt que je porte au délai est de %.2f,".formatted(coefDate));
+        println("   l'intérêt que je porte à l'évaluation du repair café est de %.2f.,".formatted(coefEvaluation));
+        println("   et l'intérêt que je porte à la distance du repair café est de %.2f.".formatted(coefDist));
+        println("Et mon délai d'attente est de %d jours maximum".formatted(patience));
 
         println("-".repeat(30));
         //launch the CFP for a rendez-vs
@@ -179,10 +198,22 @@ public class UserAgent extends GuiAgent {
     }
 
     private void repairDone(){
-        println("reparation correctement effectuée ! cela vous a coûté le temps d'un café !!");
+        var repairState = new RepairState(currentRepair.getListRepairStates().getLast());
+        repairState.setState(StateRepair.RepairSuccess);
+        currentRepair.addRepairState(repairState);
+        currentRepair.setEnd(true);
+        currentRepair.setEndDate(repairState.getDate());
+        window.addRepairState(repairState);
+        window.addRepair(currentRepair);
+        println("Réparation correctement effectuée !");
+        println("Cela vous a coûté %.2f € !".formatted(currentRepair.getCost()));
     }
 
     private void ask4Parts() {
+        var repairState = new RepairState(currentRepair.getListRepairStates().getLast());
+        repairState.setState(StateRepair.Ask4Parts);
+        currentRepair.addRepairState(repairState);
+        window.addRepairState(repairState);
         println("Lancement d'un appel d'offres auprès des distributeurs de pièces");
         ACLMessage msg = new ACLMessage(ACLMessage.CFP);
         msg.setConversationId("id");
@@ -233,7 +264,7 @@ public class UserAgent extends GuiAgent {
     }
 
     private void coffeeShopFailed() {
-        println("Echec du repair café, lancement d'une recherche de rendez vous aurpès d'autres repair cafés");
+        println("Echec du repair café, lancement d'une recherche de rendez vous auprès d'autres repair cafés");
         //TODO
     }
 
@@ -258,8 +289,9 @@ public class UserAgent extends GuiAgent {
     /**fucnction lauched when the user get ou of the coffe shop*/
     public void getOutCoffeeShop(StateRepair state){
         currentRepair.setState(state);
-        switch (state){
-            case Done -> repairDone();
+        window.println("Vous etes sorti du centre de reparation, state = %s".formatted(state));
+        if (Objects.requireNonNull(state) == StateRepair.RepairSuccess) {
+            repairDone();
         }
     }
 
@@ -277,9 +309,16 @@ public class UserAgent extends GuiAgent {
         return products;
     }
 
+    public double getCoefDist() {
+        return coefDist;
+    }
+
+    public void setCoefDist(double coefDist) {
+        this.coefDist = coefDist;
+    }
 
     /**here we simplify the scenario. A breakdown is about 1 elt..
-     * so whe choose a no between 1 to 4 and ask who can repair and at wich cost.*/
+     * so whe choose a no between 1 and 4 and ask who can repair and at which cost.*/
     private void breakdown(){
     }
 
@@ -309,13 +348,12 @@ public class UserAgent extends GuiAgent {
 
 
     public void addRepairState(RepairState repairState) {
+        var currentRepairState = currentRepair.getListRepairStates().getLast();
         if(repairState.getState() == StateRepair.NoRdzVs){
-            var currentRepairState = currentRepair.getListRepairStates().getLast();
             currentRepairState.setNextState(StateRepair.NoRdzVs);
             currentRepair.setState(StateRepair.NoRdzVs);
         }
         else{
-            var currentRepairState = currentRepair.getListRepairStates().getLast();
             currentRepairState.setNextState(repairState.getState());
             currentRepair.addRepairState(repairState);
             window.addRepairRdzVs(repairState);
@@ -333,6 +371,9 @@ public class UserAgent extends GuiAgent {
     public void addPartToBuy(Part p){
         currentRepair.getParts().add(new Part(p, 0.0));
     }
+    public Point getCoord() {
+        return coord;
+    }
 
     public Part getPartToBuy(){
         var parts = currentRepair.getParts();
@@ -340,11 +381,14 @@ public class UserAgent extends GuiAgent {
         return f.toList().getFirst();
     }
 
-    public void setBuyedPart(AID seller, Part p){
+    /**add a part in the parts owned by the agent*/
+    public void setBuyedPart(AID seller, Part p, double price){
         currentRepair.getParts().remove(p);
         currentRepair.getParts().add(p);
         var currentRepairState = currentRepair.getListRepairStates().getLast();
         currentRepairState.setNextState(StateRepair.PartReceived);
         currentRepair.setState(StateRepair.PartReceived);
+        currentRepair.addCost(price);
+        parts.add(p);
     }
 }

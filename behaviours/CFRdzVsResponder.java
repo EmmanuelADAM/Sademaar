@@ -30,14 +30,14 @@ public class CFRdzVsResponder extends ContractNetResponder {
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
         myAgent.println("~".repeat(40));
-        myAgent.println(cfp.toString());
+//        myAgent.println(cfp.toString());
         Object[]tabContent = null;
         try {  tabContent = (Object[])cfp.getContentObject();
         } catch (UnreadableException e) { throw new RuntimeException(e);}
         product = (Product)tabContent[0];
         userLevel = (int)tabContent[1];
-        myAgent.println("%s  has a problem with a %s".formatted(cfp.getSender().getLocalName(), product.getSpec()));
-        myAgent.println("its level of expertise with this object is of %d/5".formatted(userLevel));
+        myAgent.println("%s a un problème avec ce produit : %s".formatted(cfp.getSender().getLocalName(), product.getSpec()));
+        myAgent.println("Son niveau d'expertise sur cet objet est de %d/5".formatted(userLevel));
         ACLMessage answer = cfp.createReply();
         try {
             if(myAgent.getSpecialites().contains(product.getSpec().getType())) {
@@ -46,12 +46,13 @@ public class CFRdzVsResponder extends ContractNetResponder {
                 Random hasard = new Random();
                 date = date.plusDays(hasard.nextInt(1,15));
                 rdzvs = LocalDateTime.of(date, LocalTime.of(hasard.nextInt(8, 19), 0));
-                myAgent.println("I propose a rendez-vous at:" + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
-                answer.setContentObject(rdzvs);
+                Object[] tab = {rdzvs, myAgent.getCoord()};
+                myAgent.println("Je propose un rendez-vous à cette date :" + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
+                answer.setContentObject(tab);
             }
             else {
                 answer.setPerformative(ACLMessage.REFUSE);
-                answer.setContent("I'm not specialized in this type of object ("+product.getSpec().getType()+")");
+                answer.setContent("Je ne suis pas specialisé dans ce type d'objet ("+product.getSpec().getType()+")");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -59,7 +60,7 @@ public class CFRdzVsResponder extends ContractNetResponder {
 
         if(myAgent.getSpecialites().contains(product.getSpec().getType())) {
             answer.setPerformative(ACLMessage.PROPOSE);
-            myAgent.println("I propose a rdz-vs : " + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
+            myAgent.println("Je propose un rdz-vs à cette date : " + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
 
         }
         else answer.setPerformative(ACLMessage.REFUSE);
@@ -76,11 +77,11 @@ public class CFRdzVsResponder extends ContractNetResponder {
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         myAgent.println("=".repeat(15));
-        myAgent.println(" I proposed a rdz-vs : " + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
-        myAgent.println(cfp.getSender().getLocalName() + " accepted my proposal and sent the result:  " + accept.getContent());
+        myAgent.println(" J'ai proposé un rdz-vs à cette date: " + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
+        myAgent.println(cfp.getSender().getLocalName() + " a accepté ma proposition et a envoyé ceci : " + accept.getContent());
         myAgent.addRdzVs(cfp.getSender(), rdzvs);
-        myAgent.println(" my rendez-vous : ");
-        myAgent.getMaprdzvs().forEach((k, v) ->  myAgent.println("\t with agent %s : %s".formatted(k.getLocalName(), v)));
+        myAgent.println(" Mes rendez-vous : ");
+        myAgent.getMaprdzvs().forEach((k, v) ->  myAgent.println("\t avec l'agent %s : %s".formatted(k.getLocalName(), v)));
         ACLMessage msg = accept.createReply();
         msg.setPerformative(ACLMessage.INFORM);
         try { msg.setContentObject(rdzvs); } catch (IOException e) {throw new RuntimeException(e);}
@@ -95,11 +96,9 @@ public class CFRdzVsResponder extends ContractNetResponder {
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
         myAgent.println("=".repeat(10));
-        myAgent.println("PROPOSAL REJECTED");
-        myAgent.println(cfp.getSender().getLocalName() + " asked to repair elt no " + product);
-        myAgent.println(" I proposed a rdz-vs:" + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
-        myAgent.println(cfp.getSender().getLocalName() + " refused ! with this message: " + reject.getContent());
+        myAgent.println("PROPOSITION REJETEE");
+        myAgent.println(cfp.getSender().getLocalName() + " a demandé de réparer cet élément " + product);
+        myAgent.println(" J'ai proposé un rdz-vs:" + rdzvs.format(DateTimeFormatter.ofPattern("dd/MM/yy, HH:mm")));
+        myAgent.println(cfp.getSender().getLocalName() + " a refusé avec ce message: " + reject.getContent());
     }
-
-
 }

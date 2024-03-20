@@ -8,9 +8,10 @@ import jade.core.AgentServicesTools;
 import jade.gui.SimpleWindow4Agent;
 import jade.lang.acl.MessageTemplate;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.Color;
+import java.util.Random;
 
 public class DistributorAgent extends RepairAgent {
     List<Product> productList;
@@ -19,11 +20,14 @@ public class DistributorAgent extends RepairAgent {
     public void setup(){
         window = new SimpleWindow4Agent(getLocalName(),this);
         window.setBackgroundTextColor(Color.LIGHT_GRAY);
-        println("hello, do you want a new object  ?");
-
+        println("Bonjour");
         AgentServicesTools.register(this, "repair", "distributor");
         //registration to the yellow pages (Directory Facilitator Agent)
-        println("I'm just registered as a Distributor");
+        println("Je suis enregistré en tant que distributeur");
+        Random hasard = new Random();
+        coord = new Point(hasard.nextInt(100), hasard.nextInt(100));
+        println("Je suis au point (%d,%d)".formatted(coord.x, coord.y) );
+        println("Bonjour, voulez-vous une pièce de rechange  ?");
 
         productList = new ArrayList<>();
         var l = Product.getListProducts() ;
@@ -32,8 +36,8 @@ public class DistributorAgent extends RepairAgent {
         // I have my own prices
         for(var p:productList)p.setPrice(p.getPrice()*(0.7+Math.random()*0.6));
 
-        println("I have " + productList.size() + " references of products ");
-        println("Here are the products I can sell : ");
+        println("J'ai " + productList.size() + " références de produits. ");
+        println("Voici la liste : ");
         for(var p:productList)
             println("\t%s pour %.2f€".formatted(p.getName(), p.getPrice()));
 
