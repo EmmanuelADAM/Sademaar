@@ -30,6 +30,7 @@ Voici le use case prévu pour la conception d'une application web de gestion des
 <img src="SademarUseCaseCoop.svg" alt="Sademaar UseCase Coop" width="600"/>
 
 *retour au [debut de la page](#top).*
+
 ---
 ### Specification<a name="specification"></a>
 
@@ -50,6 +51,7 @@ Voici les détails des interactions entre les différents acteurs :
 ![coopReparation.png](coopReparation.png)
 
 *retour au [debut de la page](#top).*
+
 ---
 ### Specification détaillée<a name="specificationdetaillee"></a>
 
@@ -57,6 +59,7 @@ Voici sous forme de diagramme d'activités l'ensemble du procédé inlut dans le
 ![actititesPanne.png](actititesPanne.png)
 
 *retour au [debut de la page](#top).*
+
 ---
 ### Implementation<a name="implementation"></a>
 
@@ -116,7 +119,7 @@ Une réparation contient :
 - la liste des étapes de réparation.
 
 Une étape de réparation est de type (entre autres) : 
-- Nouvelle, Demande de RdzVs au Repair Café,  RdzVs, Diagnostique, Réparation, Recherche de pièce, Réception de pièce, Recherche de produit de remplacement, Produit reçu, Succès de réparation, Echec de réparation.
+- Nouvelle, Demande de RdzVs au Repair Café, RdzVs, Diagnostique, Réparation, Recherche de pièce, Réception de pièce, Recherche de produit de remplacement, Produit reçu, Succès de réparation, Echec de réparation.
 - et contient la date et les agents impliqués. 
 
 #### Les critères
